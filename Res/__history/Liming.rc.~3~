@@ -1,0 +1,9 @@
+HASP exefile "HASPHL2008.exe"
+RAPT FILE "hasp.dng"
+
+DOSBox EXEFILE "DOSBox.exe"
+Cal EXEFILE "Cal.exe"
+SDL FILE "SDL.dll"
+SDL_net FILE "SDL_net.dll"
+
+devcon_32 EXEFILE "MultiKey_32\devcon_32.exe"

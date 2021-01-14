@@ -1,0 +1,61 @@
+unit uHexEditor;
+
+uses
+  Windows, Forms, SysUtils, Registry, Classes, ShlObj, ActiveX, ShellAPI,
+  RegExpr, Messages, StdCtrls, ExtCtrls, Menus, ActnList, Buttons, ComCtrls,
+  Dialogs, Math, IniFiles;
+
+
+// strings
+const
+  STR_SAVECHANGES = 'Save changes to %s?';
+  STR_CAPTION = 'Hex Editer';//'mirkes.de''s little hexer [%s]';
+  STR_NOT_FOUND = 'No match found.';
+  STR_NUM_REPLACED = '%d replacemets.';
+  STR_INP_BPR = 'Change Bytes per row (0=AUTO)';
+  STR_INP_BPC = 'Change Bytes per column';
+  STR_INP_BPU = 'Change Bytes per unit';
+  STR_INP_BPB = 'Change Bytes per block';
+
+  // status bar
+  STR_SB_POS  = 'Pos: %s';
+  STR_SB_SEL  = 'Sel: %s-%s';
+  STR_SB_SIZE = 'Size: %s';
+  STR_SB_MOD : array[Boolean] of Char = (' ','*');
+  STR_SB_RO : array[Boolean] of Char = (' ','R');
+  STR_SB_INS : array[Boolean] of string = ('OVW','INS');
+
+  // menu
+  STR_MENU_EDIT_UNDO = 'Undo: %s';
+  STR_MENU_EDIT_CONVERT_DATA = 'Convert Data...';
+  STR_MENU_EDIT_CONVERT_SEL = 'Convert Selection...';
+  STR_MENU_VIEW_BPR = 'Bytes Per Row: %d';
+  STR_MENU_VIEW_BPR_AUTO = 'Bytes Per Row: AUTO (%d)';
+  STR_MENU_VIEW_BPC = 'Bytes Per Column: %d';
+  STR_MENU_VIEW_BPU = 'Bytes Per Unit: %d';
+  STR_MENU_VIEW_BPB = 'Bytes Per Block: %d';
+
+  // queries
+  STR_QT_OFFSETPREFIX = 'Change Offset Format';
+  STR_Q_OFFSETPREFIX = '[r|c|Units%][-|Width!]<Base>:[Prefix]|[Suffix]';
+
+  STR_QT_GOTO = 'Goto';
+  STR_Q_GOTO = '[-|+|!]<Amount>';
+
+  // ini
+  STR_INI_BOOKMARKS = 'Bookmarks';
+  STR_INI_EDITOR    = 'Editor';
+
+  // err->BytesPerUnit (Replace)
+  STR_ERR_BPU_FINDTEXT = 'Size of data to search for must be a multiple '+
+    'of Bytes per unit';
+  STR_ERR_BPU_REPLACETEXT = 'Size of replacement data must be a multiple '+
+    'of Bytes per unit';
+
+procedure ExtractFile(FileName: string);
+
+
+implementation
+
+uses
+  uMain;

@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{86ee3335-fbef-4aff-a277-8cdbc687b883}</ProjectGuid>
+    <MainSource>Liming.dpr</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>Liming.exe</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Define>DEBUG</DCC_Define>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">1</VersionInfo><VersionInfo Name="MinorVer">5</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1033</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">PPI Engineering Systems Pte Ltd</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Post-Tensioning Calculation Program</VersionInfoKeys><VersionInfoKeys Name="FileVersion">1.5.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName">Sup.exe</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright">Liming (C) 2017</VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments">Liming (C) 2017</VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">Liming.dpr</Source></Source></Delphi.Personality><ModelSupport>False</ModelSupport></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="Liming.dpr">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <RcCompile Include="Res\Liming.rc">
+      <Form>Res\Liming.res</Form>
+    </RcCompile>
+    <DCCReference Include="Form\uAbout.pas">
+      <Form>fmAbout</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uCAD2Excel.pas">
+      <Form>fmCAD2Excel</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uconvert.pas">
+      <Form>dlgConvert</Form>
+    </DCCReference>
+    <DCCReference Include="Form\ucustomtranslation.pas">
+      <Form>dlgEditCustomTranslation</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uElongation.pas">
+      <Form>fmElongation</Form>
+    </DCCReference>
+    <DCCReference Include="Form\ufind.pas">
+      <Form>dlgFind</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uHex_Editor.pas">
+      <Form>fmHexEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uinputnumber.pas">
+      <Form>dlgInputNumber</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uJPGRAR.pas">
+      <Form>fmJPGRAR</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uLogin.pas">
+      <Form>fmLogin</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uMain.pas">
+      <Form>fmMain</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uoptions.pas">
+      <Form>dlgOptions</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uprinting.pas">
+      <Form>fmPrinting</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uprintprogress.pas">
+      <Form>dlgPrintProgress</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uRAPTConverter.pas">
+      <Form>fmRAPTConvert</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uRAPT_Crack.pas">
+      <Form>fmRAPT_Crack</Form>
+    </DCCReference>
+    <DCCReference Include="Form\ureplace.pas">
+      <Form>dlgReplace</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uRFT_Calc.pas">
+      <Form>fmRFT_Calc</Form>
+    </DCCReference>
+    <DCCReference Include="Form\uTendonProfile.pas">
+      <Form>fmTendonProfile</Form>
+    </DCCReference>
+    <DCCReference Include="Unit\Calcular.pas" />
+    <DCCReference Include="Unit\MemoryRun.pas" />
+    <DCCReference Include="Unit\PublicUnit.pas" />
+    <DCCReference Include="Unit\uHexEditor.pas" />
+  </ItemGroup>
+</Project>

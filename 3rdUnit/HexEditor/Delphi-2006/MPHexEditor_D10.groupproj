@@ -1,0 +1,40 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{88cb9469-0619-472e-9a52-5dea7e463180}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup />
+  <ProjectExtensions>
+    <Borland.Personality>Default.Personality</Borland.Personality>
+    <Borland.ProjectType />
+    <BorlandProject>
+  <BorlandProject xmlns=""> <Default.Personality> </Default.Personality> </BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Target Name="MPHexEditor_D10">
+    <MSBuild Projects="MPHexEditor_D10.dproj" Targets="" />
+  </Target>
+  <Target Name="MPHexEditor_D10:Clean">
+    <MSBuild Projects="MPHexEditor_D10.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="MPHexEditor_D10:Make">
+    <MSBuild Projects="MPHexEditor_D10.dproj" Targets="Make" />
+  </Target>
+  <Target Name="MPHexEditorDsgn_D10">
+    <MSBuild Projects="MPHexEditorDsgn_D10.dproj" Targets="" />
+  </Target>
+  <Target Name="MPHexEditorDsgn_D10:Clean">
+    <MSBuild Projects="MPHexEditorDsgn_D10.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="MPHexEditorDsgn_D10:Make">
+    <MSBuild Projects="MPHexEditorDsgn_D10.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Build">
+    <CallTarget Targets="MPHexEditor_D10;MPHexEditorDsgn_D10" />
+  </Target>
+  <Target Name="Clean">
+    <CallTarget Targets="MPHexEditor_D10:Clean;MPHexEditorDsgn_D10:Clean" />
+  </Target>
+  <Target Name="Make">
+    <CallTarget Targets="MPHexEditor_D10:Make;MPHexEditorDsgn_D10:Make" />
+  </Target>
+</Project>

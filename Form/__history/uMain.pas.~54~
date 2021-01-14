@@ -1,0 +1,1338 @@
+unit uMain;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, MPHexEditor, MPHexEditorEx, ActnList, Menus, ToolWin, ComCtrls,
+  ImgList, ExtCtrls, StdCtrls, IniFiles, ShellAPI, Math, Calcular, Buttons,
+  XPMan, Grids, ufind, ureplace, RzTreeVw;
+
+type
+  TfmMain = class(TForm)
+    StatusBar1: TStatusBar;
+    ActionList1: TActionList;
+    acFileNew: TAction;
+    ImageList1: TImageList;
+    OpenDialog1: TOpenDialog;
+    CoolBar1: TCoolBar;
+    ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    acFileSave: TAction;
+    ToolButton3: TToolButton;
+    acFileSaveAs: TAction;
+    SaveDialog1: TSaveDialog;
+    acFileExit: TAction;
+    ToolButton4: TToolButton;
+    acEditUndo: TAction;
+    ToolButton5: TToolButton;
+    acEditRedo: TAction;
+    ToolButton6: TToolButton;
+    acEditCopy: TAction;
+    ToolButton7: TToolButton;
+    acEditCut: TAction;
+    ToolButton8: TToolButton;
+    acEditPaste: TAction;
+    ToolButton9: TToolButton;
+    acEditInsertNibble: TAction;
+    acEditDeleteNibble: TAction;
+    acEditSelectAll: TAction;
+    acEditFind: TAction;
+    acEditFindNext: TAction;
+    ToolButton10: TToolButton;
+    ToolButton11: TToolButton;
+    acEditConvert: TAction;
+    ToolButton12: TToolButton;
+    acViewTranslationEditCustom: TAction;
+    acEditReplace: TAction;
+    ToolButton13: TToolButton;
+    acFilePrint: TAction;
+    acFilePrintSetup: TAction;
+    ToolButton14: TToolButton;
+    PrintDialog1: TPrintDialog;
+    PrinterSetupDialog1: TPrinterSetupDialog;
+    acViewOffsetEditFormat: TAction;
+    acViewOffsetHex: TAction;
+    acViewOffsetDec: TAction;
+    acViewOffsetOct: TAction;
+    acViewBytesPerRow: TAction;
+    acViewBytesPerColumn: TAction;
+    acEditGoto: TAction;
+    acViewReadOnlyView: TAction;
+    acViewOptions: TAction;
+    ToolButton15: TToolButton;
+    acViewBytesPerUnit: TAction;
+    acViewUnicode: TAction;
+    acViewUnicodeBE: TAction;
+    acViewBytesPerBlock: TAction;
+    acTopmost: TAction;
+    actEMAIL: TAction;
+    actCO_URL: TAction;
+    actLM_URL: TAction;
+    actABOUT: TAction;
+    CheckBox1: TCheckBox;
+    acSPF2M: TAction;
+    ProgressBar1: TProgressBar;
+    act32bit_Opt1_Crack: TAction;
+    Timer1: TTimer;
+    acCAD2Excel: TAction;
+    acRAPTConvert: TAction;
+    acTendonProfile: TAction;
+    acElongation: TAction;
+    ToolButton16: TToolButton;
+    ToolButton17: TToolButton;
+    ToolButton18: TToolButton;
+    ToolButton19: TToolButton;
+    ToolButton20: TToolButton;
+    ToolButton22: TToolButton;
+    ToolButton23: TToolButton;
+    ToolButton24: TToolButton;
+    acJPGRAR: TAction;
+    acHexEditer: TAction;
+    mmMain: TMainMenu;
+    File1: TMenuItem;
+    New1: TMenuItem;
+    Open1: TMenuItem;
+    N1: TMenuItem;
+    Save1: TMenuItem;
+    SaveAs1: TMenuItem;
+    N10: TMenuItem;
+    PagePreview1: TMenuItem;
+    Print1: TMenuItem;
+    N2: TMenuItem;
+    Exit1: TMenuItem;
+    Edit1: TMenuItem;
+    Undo1: TMenuItem;
+    Redo1: TMenuItem;
+    N3: TMenuItem;
+    Copy1: TMenuItem;
+    Cut1: TMenuItem;
+    Paste1: TMenuItem;
+    N4: TMenuItem;
+    InsertNibble1: TMenuItem;
+    DeleteNibble1: TMenuItem;
+    SelectAll1: TMenuItem;
+    N5: TMenuItem;
+    Find1: TMenuItem;
+    FindNext1: TMenuItem;
+    Replace1: TMenuItem;
+    N8: TMenuItem;
+    Convert1: TMenuItem;
+    N14: TMenuItem;
+    Goto1: TMenuItem;
+    View1: TMenuItem;
+    mnTranslation: TMenuItem;
+    N9: TMenuItem;
+    EditCustomTranslation1: TMenuItem;
+    OffsetFormat1: TMenuItem;
+    Hex1: TMenuItem;
+    Decimal1: TMenuItem;
+    Octal1: TMenuItem;
+    N11: TMenuItem;
+    EditOffsetDisplay1: TMenuItem;
+    Unicode1: TMenuItem;
+    Unicodemode1: TMenuItem;
+    UnicodeBigEndian1: TMenuItem;
+    N15: TMenuItem;
+    BPR1: TMenuItem;
+    BPC1: TMenuItem;
+    BPU1: TMenuItem;
+    BPB1: TMenuItem;
+    N17: TMenuItem;
+    TopMost: TMenuItem;
+    NoEditing2: TMenuItem;
+    N18: TMenuItem;
+    Options1: TMenuItem;
+    Tools1: TMenuItem;
+    SF1: TMenuItem;
+    ElongationCalc1: TMenuItem;
+    CADtoExcel1: TMenuItem;
+    RAPTConverter1: TMenuItem;
+    endonProfile1: TMenuItem;
+    HelpH1: TMenuItem;
+    Feedback: TMenuItem;
+    PPIWebsite1: TMenuItem;
+    LimingWebsite1: TMenuItem;
+    N19: TMenuItem;
+    About1: TMenuItem;
+    acFileOpen: TAction;
+    XPManifest1: TXPManifest;
+    act32bit_Opt1_Uncrack: TAction;
+    act32bit_Opt1_Recrack: TAction;
+    act32bit_Opt2_Crack: TAction;
+    act32bit_Opt2_Recrack: TAction;
+    act32bit_Opt2_Uncrack: TAction;
+    act64bit_Opt1_Crack: TAction;
+    act64bit_Opt1_Recrack: TAction;
+    act64bit_Opt1_Uncrack: TAction;
+    PopupMenu1: TPopupMenu;
+    Undo2: TMenuItem;
+    Redo2: TMenuItem;
+    N6: TMenuItem;
+    Cut2: TMenuItem;
+    Copy2: TMenuItem;
+    Paste2: TMenuItem;
+    N7: TMenuItem;
+    SelectAll2: TMenuItem;
+    PopupMenu2: TPopupMenu;
+    Hex2: TMenuItem;
+    Decimal2: TMenuItem;
+    Octal2: TMenuItem;
+    N12: TMenuItem;
+    EditOffsetDisplay2: TMenuItem;
+    N13: TMenuItem;
+    BPR2: TMenuItem;
+    BPC2: TMenuItem;
+    N16: TMenuItem;
+    NoEditing1: TMenuItem;
+    Panel1: TPanel;
+    Splitter1: TSplitter;
+    TreeView1: TTreeView;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    MPHexEditorEx1: TMPHexEditorEx;
+    TabSheet2: TTabSheet;
+    GroupBox3: TGroupBox;
+    Label20: TLabel;
+    ComboBox7: TComboBox;
+    LabeledEdit1: TLabeledEdit;
+    LabeledEdit2: TLabeledEdit;
+    LabeledEdit3: TLabeledEdit;
+    LabeledEdit4: TLabeledEdit;
+    GroupBox4: TGroupBox;
+    Label19: TLabel;
+    ComboBox8: TComboBox;
+    LabeledEdit5: TLabeledEdit;
+    LabeledEdit6: TLabeledEdit;
+    LabeledEdit7: TLabeledEdit;
+    GroupBox5: TGroupBox;
+    Label18: TLabel;
+    Label27: TLabel;
+    ComboBox9: TComboBox;
+    ComboBox10: TComboBox;
+    LabeledEdit8: TLabeledEdit;
+    LabeledEdit9: TLabeledEdit;
+    LabeledEdit10: TLabeledEdit;
+    GroupBox6: TGroupBox;
+    Edit17: TEdit;
+    Edit16: TEdit;
+    Edit26: TEdit;
+    TabSheet5: TTabSheet;
+    TabSheet6: TTabSheet;
+    TabSheet8: TTabSheet;
+    TabSheet4: TTabSheet;
+    TabSheet3: TTabSheet;
+    Label2: TLabel;
+    Label1: TLabel;
+    TrackBar1: TTrackBar;
+    btnSPF2M: TBitBtn;
+    GroupBox1: TGroupBox;
+    GroupBox7: TGroupBox;
+    btn64bit_Opt1_Crack: TButton;
+    btn64bit_Opt1_Recrack: TButton;
+    btn64bit_Opt1_Uncrack: TButton;
+    GroupBox2: TGroupBox;
+    btn32bit_Opt2_Crack: TButton;
+    btn32bit_Opt2_Uncrack: TButton;
+    btn32bit_Opt2_Recrack: TButton;
+    GroupBox8: TGroupBox;
+    btn32bit_Opt1_Crack: TButton;
+    btn32bit_Opt1_Uncrack: TButton;
+    btn32bit_Opt1_Recrack: TButton;
+    ComboBox1: TComboBox;
+    procedure FormCreate(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormDestroy(Sender: TObject);
+    procedure acViewOptionsExecute(Sender: TObject);
+    procedure acTopmostExecute(Sender: TObject);
+    procedure actEMAILExecute(Sender: TObject);
+    procedure actCO_URLExecute(Sender: TObject);
+    procedure actLM_URLExecute(Sender: TObject);
+    procedure actABOUTExecute(Sender: TObject);
+    procedure acSPF2MExecute(Sender: TObject);
+    procedure ComboBox7Change(Sender: TObject);
+    procedure ComboBox9Change(Sender: TObject);
+    procedure ComboBox10Change(Sender: TObject);
+    procedure Edit17Change(Sender: TObject);
+    procedure Edit16Change(Sender: TObject);
+    procedure Edit17Enter(Sender: TObject);
+    procedure act32bit_Opt1_CrackExecute(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure acCAD2ExcelExecute(Sender: TObject);
+    procedure acRAPTConvertExecute(Sender: TObject);
+    procedure acTendonProfileExecute(Sender: TObject);
+    procedure acElongationExecute(Sender: TObject);
+    procedure TrackBar1Change(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure acJPGRARExecute(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
+    procedure act32bit_Opt1_UncrackExecute(Sender: TObject);
+    procedure act32bit_Opt1_RecrackExecute(Sender: TObject);
+    procedure act32bit_Opt2_CrackExecute(Sender: TObject);
+    procedure act32bit_Opt2_RecrackExecute(Sender: TObject);
+    procedure act32bit_Opt2_UncrackExecute(Sender: TObject);
+    procedure act64bit_Opt1_CrackExecute(Sender: TObject);
+    procedure act64bit_Opt1_RecrackExecute(Sender: TObject);
+    procedure act64bit_Opt1_UncrackExecute(Sender: TObject);
+    procedure LabeledEdit1Change(Sender: TObject);
+    procedure LabeledEdit2Change(Sender: TObject);
+    procedure LabeledEdit4Change(Sender: TObject);
+    procedure LabeledEdit5Change(Sender: TObject);
+    procedure LabeledEdit8Change(Sender: TObject);
+    procedure acFileOpenExecute(Sender: TObject);
+    procedure acEditFindExecute(Sender: TObject);
+    procedure acEditFindNextExecute(Sender: TObject);
+    procedure acFileNewExecute(Sender: TObject);
+    procedure MPHexEditorEx1Progress(Sender: TObject;
+      const ProgressType: TMPHProgressKind; const aName: TFileName;
+      const Percent: Byte; var Cancel: Boolean);
+    procedure StatusBar1DrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel;
+      const Rect: TRect);
+    procedure acEditConvertExecute(Sender: TObject);
+    procedure acViewBytesPerBlockExecute(Sender: TObject);
+    procedure acFileSaveExecute(Sender: TObject);
+    procedure acFileSaveAsExecute(Sender: TObject);
+    procedure acFileExitExecute(Sender: TObject);
+    procedure acEditUndoExecute(Sender: TObject);
+    procedure acEditRedoExecute(Sender: TObject);
+    procedure acEditCopyExecute(Sender: TObject);
+    procedure acEditCutExecute(Sender: TObject);
+    procedure acEditPasteExecute(Sender: TObject);
+    procedure acEditSelectAllExecute(Sender: TObject);
+    procedure acEditInsertNibbleExecute(Sender: TObject);
+    procedure acEditDeleteNibbleExecute(Sender: TObject);
+    procedure acViewTranslationEditCustomExecute(Sender: TObject);
+    procedure acViewUnicodeBEExecute(Sender: TObject);
+    procedure acViewUnicodeExecute(Sender: TObject);
+    procedure acViewBytesPerUnitExecute(Sender: TObject);
+    procedure acViewReadOnlyViewExecute(Sender: TObject);
+    procedure acEditReplaceExecute(Sender: TObject);
+    procedure acFilePrintSetupExecute(Sender: TObject);
+    procedure acFilePrintExecute(Sender: TObject);
+    procedure acViewOffsetEditFormatExecute(Sender: TObject);
+    procedure acViewOffsetHexExecute(Sender: TObject);
+    procedure acViewOffsetDecExecute(Sender: TObject);
+    procedure acViewOffsetOctExecute(Sender: TObject);
+    procedure acViewBytesPerRowExecute(Sender: TObject);
+    procedure acViewBytesPerColumnExecute(Sender: TObject);
+    procedure acEditGotoExecute(Sender: TObject);
+    procedure TreeView1Click(Sender: TObject);
+
+  private
+    { Private declarations }
+
+    // goto amount
+    FGoto: string;
+
+    // translation handler
+    procedure TranslationExecute(Sender: TObject);
+    // idle handler
+    procedure AppIdle(Sender: TObject; var Done: Boolean);
+    //procedure LoadEditorProps;
+    procedure SaveEditorProps;
+
+  public
+    { Public declarations }
+    // find storage
+    FFindRec: TFindRec;
+    // replace storage
+    FReplaceRec: TReplaceRec;
+    // array of known translations, built at runtime
+    FTranslationActions: array[TMPHTranslationKind] of TAction;
+
+    procedure ShowHint(Sender: TObject);
+
+  end;
+
+var
+  fmMain: TfmMain;
+  FIni: TMemIniFile;
+
+
+implementation
+
+uses
+  //声明引用的功能单元
+  uOptions, uAbout, uLogin, uCAD2Excel, uRAPTConverter, uTendonProfile,
+  uElongation, uJPGRAR, PublicUnit,
+  uconvert, ucustomtranslation, uprinting, uinputnumber, uHexEditor;
+
+{$R *.dfm}
+//{$R Source\UAC.res} //一般的UAC.res不能与xpmainfest共存，此UAC.res已经特别制作添加xpman，不需要也不能与xpman一起添加
+
+procedure TfmMain.FormCreate(Sender: TObject);
+var
+  LEnumTrans: TMPHTranslationKind;
+  LobjMenuItem: TMenuItem;
+begin
+  // make sure that MYGRID is not defined in mphexeditor.pas
+  Assert(fmMain.MPHexEditorEx1 is TCustomGrid);
+
+  // (p)reset
+  FFindRec.StrData := '';
+  FGoto := '+0x100';
+  FIni := TMemIniFile.Create(ChangeFileExt(ParamStr(0), '.ini'));
+
+
+  // create translation actions
+  for LEnumTrans := High(TMPHTranslationKind) downto Low(TMPHTranslationKind) do
+  begin
+    FTranslationActions[LEnumTrans] := TAction.Create(self);
+    with FTranslationActions[LEnumTrans] do
+    begin
+      ActionList := fmMain.ActionList1;
+      Tag := Integer(LEnumTrans);
+      Caption := MPHTranslationDesc[LEnumTrans];
+      GroupIndex := 1;
+      OnExecute := TranslationExecute;
+
+      // add menuitem
+      LobjMenuItem := TMenuItem.Create(self);
+      with LobjMenuItem do
+      begin
+        RadioItem := True;
+        Action := FTranslationActions[LEnumTrans];
+        fmMain.mnTranslation.Insert(0,LobjMenuItem);
+      end;
+    end;
+  end;
+
+  // set idle handler to update actions and status
+  Application.OnIdle := AppIdle;
+
+  // load editor
+  LoadEditorProps;
+  Application.OnHint := ShowHint;
+
+  // check command line
+  if (ParamCount in [1, 2]) then
+  begin
+    if (ParamStr(1) = '-RFT') or (ParamStr(1) = '/RFT') or (ParamStr(1) = '/rft') or (ParamStr(1) = '-rft') then
+      PageControl1.ActivePage := TabSheet2;
+    if (ParamCount in [1,2]) and FileExists(ParamStr(1)) then
+    with fmMain.MPHexEditorEx1 do
+    begin
+      try
+        LoadFromFile(ParamStr(1));
+        LoadBookmarks;
+      finally
+        fmMain.StatusBar1.Panels[7].Text := '-';
+      end;
+    end;
+    if ParamStr(2) = '/p' then
+    begin
+      fmMain.MPHexEditorEx1.PrintOptions.Flags := fmMain.MPHexEditorEx1.PrintOptions.Flags
+        - [pfSelectionOnly, pfCurrentViewOnly];
+      PrintPreview(fmMain.MPHexEditorEx1, fmMain.acFilePrintSetup, True);
+      Application.Terminate;
+    end
+    else
+      MessageBox(Handle, Pchar('Please use correct command line,' + #13 + #10 + #13 + '/P for Print.' + #13 + #10 + #13 + '/RFT for Start from RTF Calc page.'), 'Notice:', MB_OK + MB_ICONINFORMATION);
+  end;
+
+end;
+
+procedure TfmMain.AppIdle(Sender: TObject; var Done: Boolean);
+begin
+  // all actions are processed in this handler
+  Done := True;
+
+  //Moved all the AppIdle code to uHexEditor.pas
+  UpdateStatusBar;
+end;
+
+procedure TfmMain.TranslationExecute(Sender: TObject);
+begin
+  with TAction(Sender)
+  do
+    fmMain.MPHexEditorEx1.Translation := TMPHTranslationKind(Tag);
+end;
+
+procedure TfmMain.TreeView1Click(Sender: TObject);
+begin
+  if TreeView1.Selected <> Nil then
+  begin
+    if TreeView1.Selected.Text = 'RFT Calc' then
+    begin
+      //Application.CreateForm(TForm2,Form2);
+      //Form2.Caption := TreeView1.Selected.Text;
+      //Form2.ShowModal;
+      ShowMessage('Hello World');
+      //Form2.Free;
+    end;
+    if TreeView1.Selected.Text = 'CAD 2 Excel' then acCAD2Excel.Execute;
+    if TreeView1.Selected.Text = 'Elongation Calc' then acElongation.Execute;
+
+  end;
+end;
+
+procedure TfmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  // eventually save modified file
+  CanClose := CheckChanges;
+  SaveBookmarks;
+
+  if CanClose then SaveEditorProps;
+  CleanExtractFile;
+  Application.Terminate;
+
+end;
+
+procedure TfmMain.FormDestroy(Sender: TObject);
+begin
+  FIni.UpdateFile;
+  FIni.Free;
+end;
+
+procedure TfmMain.MPHexEditorEx1Progress(Sender: TObject;
+  const ProgressType: TMPHProgressKind; const aName: TFileName;
+  const Percent: Byte; var Cancel: Boolean);
+begin
+  // show progress indicator in statusbar
+  fmMain.StatusBar1.Panels[7].Text := IntToStr(Percent);
+  Update;
+  // check esc key
+  Cancel := Bool(GetAsyncKeyState(VK_MENU) and (not 1));
+end;
+
+procedure TfmMain.SaveEditorProps;
+var
+  LsrlData: TStrings;
+  LIntPos: Integer;
+begin
+  LsrlData := TStringList.Create;
+  try
+    FIni.EraseSection(STR_INI_EDITOR);
+    with LsrlData do
+    begin
+      Text := fmMain.MPHexEditorEx1.PropertiesAsString;
+      if Count > 0
+      then
+        for LIntPos := 0 to Pred(Count)
+        do
+          FIni.WriteString(STR_INI_EDITOR, Names[LIntPos], Values[Names[LIntPos]]);
+    end;
+  finally
+    LsrlData.Free;
+  end;
+
+  try
+    with FIni do
+    begin
+      WriteInteger('General', 'PosLeft', Self.Left);
+      WriteInteger('General', 'PosTop', Self.Top);
+      WriteInteger('General', 'Width', Self.Width);
+      WriteInteger('General', 'Height', Self.Height);
+      WriteBool('General', 'TopMost', TopMost.Checked);
+      WriteString('Dongle', 'Key', 'Liming');
+      WriteString('Language', 'Language', ComboBox1.Text);
+      WriteInteger('General', 'ActivePage', PageControl1.ActivePageIndex);
+    end;
+
+    //save current language setting
+    SaveLanguage;
+  finally
+    ;
+  end;
+end;
+
+procedure TfmMain.acViewBytesPerBlockExecute(Sender: TObject);
+var
+  LIntVal: Integer;
+begin
+  with fmMain.MPHexEditorEx1 do
+  begin
+    LIntVal := BytesPerBlock;
+    if InputNumber(STR_INP_BPB,LIntVal, -1, BytesPerRow)
+    then
+      BytesPerBlock := LIntVal
+  end;
+end;
+
+procedure TfmMain.acViewBytesPerColumnExecute(Sender: TObject);
+var
+  LIntVal: Integer;
+begin
+  with fmMain.MPHexEditorEx1 do
+  begin
+    LIntVal := BytesPerColumn;
+    if InputNumber(STR_INP_BPC,LIntVal, 1, 255)
+    then
+      BytesPerColumn := LIntVal
+  end;
+end;
+
+
+procedure TfmMain.acViewBytesPerRowExecute(Sender: TObject);
+var
+  LIntVal: Integer;
+begin
+  with fmMain.MPHexEditorEx1 do
+  begin
+    LIntVal := BytesPerRow;
+    if InputNumber(STR_INP_BPR,LIntVal, 0, 255) then
+    begin
+      if LIntVal = 0 then
+        AutoBytesPerRow := True
+      else
+      begin
+        AutoBytesPerRow := False;
+        BytesPerRow := LIntVal
+      end;
+    end;
+  end;
+end;
+
+procedure TfmMain.acViewBytesPerUnitExecute(Sender: TObject);
+var
+  LIntVal: Integer;
+begin
+  with fmMain.MPHexEditorEx1 do
+  begin
+    LIntVal := BytesPerUnit;
+    if InputNumber(STR_INP_BPU,LIntVal, 1, 8)
+    then
+      BytesPerUnit := LIntVal
+  end;
+end;
+
+procedure TfmMain.acViewOffsetDecExecute(Sender: TObject);
+begin
+  fmMain.MPHexEditorEx1.OffsetFormat := MPHOffsetDec;
+  fmMain.MPHexEditorEx1.RulerNumberBase := 10;
+end;
+
+procedure TfmMain.acViewOffsetEditFormatExecute(Sender: TObject);
+var
+  LStrPrefix: string;
+begin
+  with fmMain.MPHexEditorEx1 do
+  begin
+    LStrPrefix := OffsetFormat;
+    if InputQuery(STR_QT_OFFSETPREFIX, STR_Q_OFFSETPREFIX, LStrPrefix)
+    then
+      OffsetFormat := LStrPrefix;
+  end;
+end;
+
+procedure TfmMain.acViewOffsetHexExecute(Sender: TObject);
+begin
+  fmMain.MPHexEditorEx1.OffsetFormat := MPHOffsetHex;
+  fmMain.MPHexEditorEx1.RulerNumberBase := 16;
+end;
+procedure TfmMain.acViewOffsetOctExecute(Sender: TObject);
+begin
+  fmMain.MPHexEditorEx1.OffsetFormat := MPHOffsetOct;
+  fmMain.MPHexEditorEx1.RulerNumberBase := 8;
+end;
+
+procedure TfmMain.acViewOptionsExecute(Sender: TObject);
+var
+  LStrOptions: string;
+begin
+  with fmMain.MPHexEditorEx1 do
+  begin
+    LStrOptions := PropertiesAsString;
+    if EditEditorOptions(LStrOptions)
+    then
+      PropertiesAsString := LStrOptions;
+  end;
+end;
+
+procedure TfmMain.acViewReadOnlyViewExecute(Sender: TObject);
+begin
+  with fmMain.MPHexEditorEx1
+  do
+    ReadOnlyView := not ReadOnlyView;
+end;
+
+procedure TfmMain.acViewTranslationEditCustomExecute(Sender: TObject);
+begin
+  with fmMain.MPHexEditorEx1
+  do
+    if EditCustomTranslation and (Translation = tkCustom)
+    then
+      Repaint;
+end;
+
+procedure TfmMain.acViewUnicodeBEExecute(Sender: TObject);
+begin
+  with fmMain.MPHexEditorEx1 do
+    UnicodeBigEndian := not UnicodeBigEndian;
+end;
+
+procedure TfmMain.acViewUnicodeExecute(Sender: TObject);
+begin
+  with fmMain.MPHexEditorEx1 do
+    UnicodeChars := not UnicodeChars;
+end;
+
+procedure TfmMain.acTopmostExecute(Sender: TObject);
+begin
+  if TopMost.Checked = True then
+    SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE + SWP_NOMOVE)
+  else
+    SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE + SWP_NOMOVE);
+
+end;
+
+procedure TfmMain.actEMAILExecute(Sender: TObject);
+begin
+  ShellExecute(Handle, 'open', pchar('mailto:' + LM_EMAIL), nil, nil, SW_Hide);
+end;
+
+procedure TfmMain.actCO_URLExecute(Sender: TObject);
+begin
+  ShellExecute(Handle, 'open', CO_URL, nil, nil, SW_Hide);
+end;
+
+procedure TfmMain.actLM_URLExecute(Sender: TObject);
+begin
+  ShellExecute(Handle, 'open', LM_URL, nil, nil, SW_Hide);
+end;
+
+procedure TfmMain.actABOUTExecute(Sender: TObject);
+begin
+  fmMain.Hide; //Hide this Form, create another form and show.
+  fmAbout := TfmAbout.Create(Application);
+  uAbout.fmAbout.Show;
+end;
+
+procedure TfmMain.acSPF2MExecute(Sender: TObject);
+begin
+
+{ //外置dll方式调用应用程序方法，解压密码519110
+  if FileExists('Profile.dll') then
+    ShellExecute(Handle, nil, 'cmd.exe', pchar('/c start ' + 'Profile.dll -P519110'), nil, SW_HIDE)//隐藏运行RAR压缩文件，密码519110
+  else
+    MessageBox(Handle, Pchar('Notice ：' + #13 + #13 + 'Profile.dll not found.' + #13 + #13 + 'Please contact Liming.'), 'Notice:', MB_OK + MB_ICONASTERISK);
+}
+
+  try
+  ExtractFile('DOSBox');
+  finally
+  ShellExecute(Handle, nil, PChar(GetTempDirectory + 'DOSBox.exe'), PChar(GetTempDirectory + 'Cal.exe'), '-noconsole', SW_HIDE);
+  end;
+  
+end;
+
+procedure TfmMain.ComboBox7Change(Sender: TObject);
+begin
+  try
+    LabeledEdit3.Text := FormatFloat('0.0', (StrtoFloat(LabeledEdit4.Text) * RebarAreaCalc(StrToFloat(ComboBox7.Text))));
+  except
+    on e: Exception do
+      LabeledEdit3.Text := e.Message;
+  end;
+end;
+
+procedure TfmMain.LabeledEdit1Change(Sender: TObject);
+begin
+  try
+    LabeledEdit4.Text := FloatToStr((StrToFloat(LabeledEdit1.Text) * 1000 / StrtoFloat(LabeledEdit2.Text))); //Ceil(X)取得大于等于X的最小的整数
+    LabeledEdit3.Text := FormatFloat('0.0', (StrtoFloat(LabeledEdit4.Text) * RebarAreaCalc(StrToFloat(ComboBox7.Text))));
+    LabeledEdit8.Text := LabeledEdit1.Text;
+  except
+    on e: Exception do
+      LabeledEdit3.Text := e.Message;
+  end;
+end;
+
+procedure TfmMain.LabeledEdit2Change(Sender: TObject);
+begin
+  try
+    LabeledEdit4.Text := FloatToStr((StrToFloat(LabeledEdit1.Text) * 1000 / StrtoFloat(LabeledEdit2.Text))); //Ceil(X)取得大于等于X的最小的整数
+    LabeledEdit3.Text := FormatFloat('0.0', (StrtoFloat(LabeledEdit4.Text) * RebarAreaCalc(StrToFloat(ComboBox7.Text))));
+  except
+    on e: Exception do
+      LabeledEdit3.Text := e.Message;
+  end;
+end;
+
+procedure TfmMain.LabeledEdit4Change(Sender: TObject);
+begin
+  try
+    LabeledEdit3.Text := FormatFloat('0.0', (StrtoFloat(LabeledEdit4.Text) * RebarAreaCalc(StrToFloat(ComboBox7.Text))));
+  except
+    on e: Exception do
+      LabeledEdit3.Text := e.Message;
+  end;
+end;
+
+procedure TfmMain.LabeledEdit5Change(Sender: TObject);
+begin
+  try
+    LabeledEdit6.Text := FloatToStr(Ceil(StrToFloat(LabeledEdit5.Text) * StrToFloat(LabeledEdit7.Text) / RebarAreaCalc(StrToFloat(ComboBox8.Text))));
+  except
+    on e: Exception do
+      LabeledEdit6.Text := e.Message;
+  end;
+end;
+
+procedure TfmMain.LabeledEdit8Change(Sender: TObject);
+begin
+  try
+    LabeledEdit9.Text := FloatToStr(StrToFloat(LabeledEdit8.Text) * MeshAreaCalc(StrToFloat(ComboBox9.Text)));
+    LabeledEdit10.Text := FloatToStr(StrToFloat(LabeledEdit8.Text) * MeshAreaCalc(StrToFloat(ComboBox10.Text)));
+  except
+    on e: Exception do
+    begin
+      LabeledEdit10.Text := e.Message;
+      LabeledEdit9.Text := e.Message;
+    end;
+  end;
+end;
+
+procedure TfmMain.ComboBox9Change(Sender: TObject);
+begin
+  if ComboBox9.Text <> '' then
+    LabeledEdit9.Text := FloatToStr(StrToFloat(LabeledEdit8.Text) * MeshAreaCalc(StrToFloat(ComboBox9.Text)))
+end;
+
+procedure TfmMain.ComboBox10Change(Sender: TObject);
+begin
+  if TComboBox(Sender).Text <> '' then
+    LabeledEdit10.Text := FloatToStr(StrToFloat(LabeledEdit8.Text) * MeshAreaCalc(StrToFloat(ComboBox10.Text)));
+end;
+
+procedure TfmMain.ComboBox1Change(Sender: TObject);
+begin
+  SetActiveLanguage(ComboBox1.Text);
+end;
+
+procedure TfmMain.Edit17Change(Sender: TObject);
+begin
+  try
+    Edit16.Text := FloatToStr(CalcularExpression(PChar(Edit17.Text)))//计算主要公式引用，CalcularExpression.
+  except
+    on e: Exception do
+      Edit16.Text := e.Message;
+  end;
+end;
+
+procedure TfmMain.Edit16Change(Sender: TObject);
+begin
+  begin
+    try
+      Edit26.Text := FloatToStr(CalcularExpression(PChar(Edit16.Text)))//计算主要公式引用，CalcularExpression.
+    except
+      on e: Exception do
+        Edit26.Text := e.Message;
+    end;
+  end;
+end;
+
+procedure TfmMain.Edit17Enter(Sender: TObject);
+begin
+  if TEdit(Sender).Text = 'INPUT FORMULA HERE' then
+    Edit17.Clear;
+end;
+
+procedure TfmMain.act32bit_Opt1_CrackExecute(Sender: TObject);
+begin
+  ExtractFile('HASP');
+  ShowMessage('Please make sure SafeNet Sentinel Runtime has been installed before Crack!');
+  ShellExecute(Handle, 'runas', PChar(GetTempDirectory + 'HASPHL2008'), ' install', nil, SW_HIDE); //Runas Administrator
+  ShellExecute(Handle, 'runas', PChar(GetTempDirectory + 'HASPHL2008'), ' start', nil, SW_HIDE);
+  ShellExecute(Handle, 'runas', PChar(GetTempDirectory + 'HASPHL2008'), PChar(' load ' + GetTempDirectory + 'hasp.dng'), nil, SW_HIDE);
+  ShowMessage('Crack finish!');
+end;
+
+procedure TfmMain.act32bit_Opt1_RecrackExecute(Sender: TObject);
+begin
+  ExtractFile('HASP');
+  ShowMessage('Please make sure SafeNet Sentinel Runtime has been installed before Crack!');
+  ShellExecute(Handle, 'runas', PChar(GetTempDirectory + 'HASPHL2008'), ' install', nil, SW_HIDE); //Runas Administrator
+  ShellExecute(Handle, 'runas', PChar(GetTempDirectory + 'HASPHL2008'), ' start', nil, SW_HIDE);
+  ShellExecute(Handle, 'runas', PChar(GetTempDirectory + 'HASPHL2008'), ' clean', nil, SW_HIDE);
+  ShellExecute(Handle, 'runas', PChar(GetTempDirectory + 'HASPHL2008'), PChar(' load ' + GetTempDirectory + 'hasp.dng'), nil, SW_HIDE);
+  ShowMessage('Rerack finish!');
+end;
+
+procedure TfmMain.act32bit_Opt1_UncrackExecute(Sender: TObject);
+begin
+  ExtractFile('HASP');
+  ShellExecute(Handle, 'runas', PChar(GetTempDirectory + 'HASPHL2008'), ' stop', nil, SW_HIDE); //Runas Administrator
+  ShellExecute(Handle, 'runas', PChar(GetTempDirectory + 'HASPHL2008'), ' uninstall', nil, SW_HIDE); //Runas Administrator
+  ShowMessage('Unrack finish!');
+end;
+
+procedure TfmMain.act32bit_Opt2_CrackExecute(Sender: TObject);
+begin
+  ExtractFile('MultiKey_32');
+  ShowMessage('Please make sure SafeNet Sentinel Runtime has been installed before Crack!'+#10+#13+'If the installation window appears, please select Install!');
+  ShellExecute(Handle, 'runas', 'cmd.exe', pchar('/c ' + GetTempDirectory + '\MultiKey_32\install.cmd'), nil, SW_HIDE); //Runas Administrator
+  ShowMessage('Crack finish!');
+end;
+
+procedure TfmMain.act32bit_Opt2_RecrackExecute(Sender: TObject);
+begin
+  ExtractFile('MultiKey_32');
+  ShowMessage('Please make sure SafeNet Sentinel Runtime has been installed before Crack!'+#10+#13+'If the installation window appears, please select Install!');
+  ShellExecute(Handle, 'runas', 'cmd.exe', pchar('/c ' + GetTempDirectory + '\MultiKey_32\restart.cmd'), nil, SW_HIDE); //Runas Administrator
+  ShowMessage('Rerack finish!');
+end;
+
+procedure TfmMain.act32bit_Opt2_UncrackExecute(Sender: TObject);
+begin
+  ExtractFile('MultiKey_32');
+  ShellExecute(Handle, 'runas', 'cmd.exe', pchar('/c ' + GetTempDirectory + '\MultiKey_32\remove.cmd'), nil, SW_HIDE); //Runas Administrator
+  ShowMessage('Unrack finish!');
+end;
+
+procedure TfmMain.act64bit_Opt1_CrackExecute(Sender: TObject);
+begin
+  ExtractFile('MultiKey_64');
+  ShowMessage('Please make sure SafeNet Sentinel Runtime has been installed before Crack!'+#10+#13+'If the installation window appears, please select Install!');
+  ShellExecute(Handle, 'runas', 'cmd.exe', pchar('/c ' + GetTempDirectory + '\MultiKey_64\install.cmd'), nil, SW_HIDE); //Runas Administrator
+  ShowMessage('Crack finish!');
+end;
+
+procedure TfmMain.act64bit_Opt1_RecrackExecute(Sender: TObject);
+begin
+  ExtractFile('MultiKey_64');
+  ShowMessage('Please make sure SafeNet Sentinel Runtime has been installed before Crack!'+#10+#13+'If the installation window appears, please select Install!');
+  ShellExecute(Handle, 'runas', 'cmd.exe', pchar('/c ' + GetTempDirectory + '\MultiKey_64\restart.cmd'), nil, SW_HIDE); //Runas Administrator
+  ShowMessage('Rerack finish!');
+end;
+
+procedure TfmMain.act64bit_Opt1_UncrackExecute(Sender: TObject);
+begin
+  ExtractFile('MultiKey_64');
+  ShellExecute(Handle, 'runas', 'cmd.exe', pchar('/c ' + GetTempDirectory + '\MultiKey_64\remove.cmd'), nil, SW_HIDE); //Runas Administrator
+  ShowMessage('Unrack finish!');
+end;
+
+procedure TfmMain.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #27 then //Press Esc to active action: Exit the program.
+    case MessageBox(Handle, 'DO YOU WANT TO EXIT?', 'NOTICE:', MB_OKCANCEL + MB_ICONQUESTION) of
+      IDOK:
+        Self.Close;
+      IDCANCEL:
+        ;
+    end;
+
+  if Key = #13 then
+  begin
+    if PageControl1.ActivePage = TabSheet2 then
+      perform(WM_NEXTDLGCTL, 0, 0);
+  end;
+end;
+
+procedure TfmMain.StatusBar1DrawPanel(StatusBar: TStatusBar;
+  Panel: TStatusPanel; const Rect: TRect);
+var
+  LIntProgress: Integer;
+  LRctTemp: TRect;
+begin
+  if Panel.Index = 7 then
+  begin
+    LIntProgress := StrToIntDef(Panel.Text, -1);
+    if LIntProgress > -1 then
+    begin
+      if LIntProgress = 100
+      then
+        Panel.Text := '-' // progressing finished
+      else
+      begin
+        // fill percentag of rect
+        LRctTemp := Rect;
+        InflateRect(LRctTemp,-2,-2);
+        with StatusBar.Canvas do
+        begin
+          Frame3D(StatusBar.Canvas, LRctTemp, clBtnShadow, clBtnHighlight, 1);
+          //InflateRect(LRctTemp,-1,-1);
+          with LRctTemp
+          do
+            Right := Left+Round((Right - Left) / 100 * LIntProgress);
+          Brush.Color := clActiveCaption;
+          FillRect(LRctTemp);
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TfmMain.acCAD2ExcelExecute(Sender: TObject);
+begin
+  fmCAD2Excel := TfmCAD2Excel.Create(Application);
+  //fmCAD2Excel.Parent := Panel2;
+  //fmCAD2Excel.Show;
+
+end;
+
+procedure TfmMain.acRAPTConvertExecute(Sender: TObject);
+begin
+  Application.CreateForm(TfmRAPTConvert, fmRAPTConvert);
+  fmRAPTConvert.Parent := TabSheet5;
+  fmRAPTConvert.Show;
+end;
+
+procedure TfmMain.acTendonProfileExecute(Sender: TObject);
+begin
+  Application.CreateForm(TfmTendonProfile, fmTendonProfile);
+  fmTendonProfile.Parent := TabSheet8;
+  fmTendonProfile.Show;
+  Application.CreateForm(TdlgOptions, dlgOptions);
+end;
+
+procedure TfmMain.acEditConvertExecute(Sender: TObject);
+var
+  LEnumFrom,
+  LEnumTo: TMPHTranslationKind;
+  LIntStart,
+  LIntEnd: Integer;
+begin
+  with fmMain.MPHexEditorEx1 do
+  begin
+    LEnumFrom := Translation;
+    LEnumTo := Translation;
+    if SelectConvertTranslation(LEnumFrom, LEnumTo) and (LEnumFrom <> LEnumTo) then
+    begin
+      if SelCount > 0 then
+      begin
+        // just selection
+        LIntStart := Min(SelStart, SelEnd);
+        LIntEnd := Max(SelStart, SelEnd);
+      end
+      else
+      begin
+        // whole file
+        LIntStart := 0;
+        LIntEnd := Pred(DataSize);
+      end;
+      ConvertRange(LIntStart, LIntEnd, LEnumFrom, LEnumTo);
+      if SelCount = 0
+      then
+        Translation := LEnumTo;
+    end;
+  end;
+end;
+
+procedure TfmMain.acEditCopyExecute(Sender: TObject);
+begin
+  fmMain.MPHexEditorEx1.CBCopy;
+end;
+
+procedure TfmMain.acEditCutExecute(Sender: TObject);
+begin
+  fmMain.MPHexEditorEx1.CBCut;
+end;
+
+procedure TfmMain.acEditDeleteNibbleExecute(Sender: TObject);
+begin
+  with fmMain.MPHexEditorEx1
+  do
+    DeleteNibble(GetCursorPos, InCharField or ((Col mod 2) = 0));
+end;
+
+procedure TfmMain.acEditFindExecute(Sender: TObject);
+var
+  LIntSize: Integer;
+begin
+  if FindGetOptions(FFindRec) then
+  begin
+    with FFindRec do
+    begin
+      if not BoolFindText then
+      begin
+        // convert hex data to string
+        SetLength(StrData, Length(StrText));
+        UniqueString(StrData);
+        ConvertHexToBin(PChar(StrText), PChar(StrData), Length(StrText), fmMain.MPHexEditorEx1.SwapNibbles, LIntSize);
+        SetLength(StrData, LIntSize);
+      end;
+      if Length(StrData) > 0 then
+      begin
+        // start find
+        fmMain.acEditFindNext.Enabled := True;
+        fmMain.acEditFindNext.Execute;
+      end;
+    end;
+  end;
+end;
+
+procedure TfmMain.acEditFindNextExecute(Sender: TObject);
+var
+  LIntFound,
+    LIntPos: Integer;
+  LStrFind: string;
+begin
+  with fmMain.MPHexEditorEx1, FFindRec
+  do
+    if StrData <> '' then
+    begin
+      LIntPos := Max(0, GetCursorPos);
+      if (Length(StrData) = 1) and ((SelCount) = 1)
+      then
+        Inc(LIntPos);
+      if LIntPos >= DataSize
+      then
+        LIntFound := -1
+      else
+      begin
+        LStrFind := PrepareFindReplaceData(StrData, BoolIgnoreCase, BoolFindText);
+        if (Length(LStrFind) mod BytesPerUnit) <> 0 then
+        begin
+          MessageDlg(STR_ERR_BPU_FINDTEXT, mtError, [mbOK], 0);
+          Exit;
+        end;
+        LIntFound := Find(PChar(LStrFind), Length(LStrFind), LIntPos, DataSize -1,
+          BoolIgnoreCase);
+      end;
+      if LIntFound = -1
+      then
+        ShowMessage(STR_NOT_FOUND)
+      else
+      begin
+        SelStart := LIntFound + Length(LStrFind)-1;
+        SelEnd := LIntFound;
+      end;
+    end;
+end;
+
+procedure TfmMain.acEditGotoExecute(Sender: TObject);
+var
+  LChrRel: Char;
+  LIntPos: Integer;
+  LStrTemp: string;
+begin
+  with fmMain.MPHexEditorEx1
+  do
+    if InputQuery(STR_QT_GOTO, STR_Q_GOTO, FGoto) and (FGoto <> '') then
+    begin
+      LChrRel := #0;
+      LStrTemp := FGoto;
+      if LStrTemp[1] in ['-','+','!'] then
+      begin
+        LChrRel := LStrTemp[1];
+        Delete(LStrTemp,1,1);
+      end;
+      LIntPos := CheckRadixToInt(LStrTemp);
+      case LChrRel of
+        '-': Seek(-LIntPos, soFromCurrent);
+        '+': Seek(LIntPos, soFromCurrent);
+        '!': Seek(-LIntPos, soFromEnd);
+      else
+        Seek(LIntPos, soFromBeginning);
+      end;
+    end;
+end;
+
+procedure TfmMain.acEditInsertNibbleExecute(Sender: TObject);
+begin
+  with fmMain.MPHexEditorEx1
+  do
+    InsertNibble(GetCursorPos, InCharField or ((Col mod 2) = 0));
+end;
+
+procedure TfmMain.acEditPasteExecute(Sender: TObject);
+begin
+  fmMain.MPHexEditorEx1.CBPaste;
+end;
+
+procedure TfmMain.acEditRedoExecute(Sender: TObject);
+begin
+  fmMain.MPHexEditorEx1.Redo;
+end;
+
+procedure TfmMain.acEditReplaceExecute(Sender: TObject);
+var
+  LIntSize,
+  LIntPos,
+  LIntDone,
+  LIntPos2: Integer;
+
+  LStrFind,
+    LStrReplace: string;
+begin
+  if ReplaceGetOptions(FReplaceRec)
+  then
+    with fmMain.MPHexEditorEx1, FReplaceRec do
+    try
+      if not BoolFindText then
+      begin
+        // convert hex data to string
+        SetLength(StrDataToFind, Length(StrTextToFind));
+        UniqueString(StrDataToFind);
+        ConvertHexToBin(PChar(StrTextToFind), PChar(StrDataToFind),
+          Length(StrTextToFind), SwapNibbles, LIntSize);
+        SetLength(StrDataToFind, LIntSize);
+      end;
+      UniqueString(StrDataToReplace);
+      if (not BoolReplaceText) and (StrTextToReplace <> '') then
+      begin
+        // convert hex data to string
+        SetLength(StrDataToReplace, Length(StrTextToReplace));
+        ConvertHexToBin(PChar(StrTextToReplace), PChar(StrDataToReplace),
+          Length(StrTextToReplace), SwapNibbles, LIntSize);
+        SetLength(StrDataToReplace, LIntSize);
+      end;
+
+      LStrFind := PrepareFindReplaceData(StrDataToFind, BoolIgnoreCase, BoolFindText);
+      LStrReplace := PrepareFindReplaceData(StrDataToReplace, False, BoolReplaceText);
+
+      if BoolReplaceAll
+      then
+        LIntPos := 0
+      else
+        LIntPos := Max(0, GetCursorPos);
+
+      LIntDone := 0;
+
+      // check length of data to find and data to replace depending on bytesperunit
+      if (Length(LStrFind) mod BytesPerUnit) <> 0 then
+      begin
+        MessageDlg(STR_ERR_BPU_FINDTEXT, mtError, [mbOK], 0);
+        Exit;
+      end;
+
+      if (Length(LStrReplace) mod BytesPerUnit) <> 0 then
+      begin
+        MessageDlg(STR_ERR_BPU_REPLACETEXT, mtError, [mbOK], 0);
+        Exit;
+      end;
+
+      repeat
+        LIntPos2 := Find(PChar(LStrFind), Length(LStrFind), LIntPos, DataSize -1,
+          BoolIgnoreCase);
+        if LIntPos2 = -1
+        then
+          Break;
+        Inc(LIntDone);
+        SelStart := LIntPos2;
+        SelEnd := LIntPos2 + Length(LStrFind)-1;
+        if LStrReplace <> ''
+        then
+          ReplaceSelection(PChar(LStrReplace), Length(LStrReplace), '', False)
+        else
+          DeleteSelection;
+        LIntPos := LIntPos2 + Length(LStrReplace);
+
+        with fmMain.StatusBar1 do
+        begin
+          Panels[7].Text := IntToStr(Round(LIntPos2/DataSize*100));
+          Update;
+        end;
+      until not BoolReplaceAll;
+
+      if LIntDone = 0
+      then
+        Raise Exception.Create(STR_NOT_FOUND)
+      else
+        if BoolReplaceAll
+        then
+          ShowMessage(Format(STR_NUM_REPLACED,[LIntDone]));
+    finally
+      fmMain.StatusBar1.Panels[7].Text := '-';
+    end;
+end;
+
+procedure TfmMain.acEditSelectAllExecute(Sender: TObject);
+begin
+  fmMain.MPHexEditorEx1.SelectAll;
+end;
+
+procedure TfmMain.acEditUndoExecute(Sender: TObject);
+begin
+  fmMain.MPHexEditorEx1.Undo;
+end;
+
+procedure TfmMain.acElongationExecute(Sender: TObject);
+begin
+  fmElongation := TfmElongation.Create(Application);
+  //fmElongation.Parent := fmMain;
+  //fmElongation.Show;
+end;
+
+procedure TfmMain.acFileExitExecute(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfmMain.acFileNewExecute(Sender: TObject);
+begin
+  if CheckChanges then
+  begin
+    // create a new empty file
+    SaveBookmarks;
+    fmMain.MPHexEditorEx1.CreateEmptyFile('');
+  end;
+end;
+
+procedure TfmMain.acFileOpenExecute(Sender: TObject);
+begin
+  if CheckChanges then
+  begin
+    SaveBookmarks;
+    with fmMain.OpenDialog1
+    do
+      if Execute
+      then
+        with fmMain.MPHexEditorEx1 do
+        begin
+          try
+            LoadFromFile(fmMain.OpenDialog1.FileName);
+            LoadBookmarks;
+          finally
+            fmMain.StatusBar1.Panels[7].Text := '-';
+          end;
+          if ofReadOnly in Options
+          then
+            // set readonly in hexeditor if readonly was checked in dialog
+            // if unchecked, let the hexeditor decide if it can save the file
+            ReadOnlyFile := True;
+        end;
+  end;
+end;
+
+procedure TfmMain.acFilePrintExecute(Sender: TObject);
+begin
+  PrintPreview(fmMain.MPHexEditorEx1, fmMain.acFilePrintSetup, False);
+end;
+
+procedure TfmMain.acFilePrintSetupExecute(Sender: TObject);
+begin
+  fmMain.PrinterSetupDialog1.Execute;
+end;
+
+procedure TfmMain.acFileSaveAsExecute(Sender: TObject);
+begin
+  SaveFile(True);
+end;
+
+procedure TfmMain.acFileSaveExecute(Sender: TObject);
+begin
+  SaveFile(False);
+end;
+
+procedure TfmMain.acJPGRARExecute(Sender: TObject);
+begin
+  Application.CreateForm(TfmJPGRAR, fmJPGRAR);
+  fmJPGRAR.Parent := TabSheet4;
+  fmJPGRAR.Show;
+end;
+
+procedure TfmMain.TrackBar1Change(Sender: TObject);
+begin
+  Self.AlphaBlend := True;
+  Self.AlphaBlendValue := TrackBar1.Position;
+end;
+
+procedure TfmMain.Timer1Timer(Sender: TObject);
+begin
+  Timer1.Enabled := False;
+//  application.CreateForm(TfmLogin,fmLogin);
+//  fmLogin.ShowModal;
+end;
+
+procedure TfmMain.ShowHint(Sender: TObject);
+begin
+  fmMain.Statusbar1.Panels[9].Text := Application.Hint;
+end;
+
+
+end.
+

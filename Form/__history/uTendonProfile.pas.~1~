@@ -1,0 +1,983 @@
+unit uTendonProfile;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, TeeProcs, TeEngine, Chart, ComCtrls, Math, Series,
+  Menus, IniFiles;
+
+type
+  TfmTendonProfile = class(TForm)
+    Label7: TLabel;
+    ComboBox2: TComboBox;
+    Label11: TLabel;
+    ComboBox6: TComboBox;
+    GroupBox2: TGroupBox;
+    Label10: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Edit_X: TEdit;
+    Edit_Y2: TEdit;
+    Edit_Y1: TEdit;
+    Button2: TButton;
+    GroupBox9: TGroupBox;
+    Label15: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Edit5: TEdit;
+    ComboBox4: TComboBox;
+    ComboBox5: TComboBox;
+    Panel1: TPanel;
+    Chart1: TChart;
+    Memo1: TMemo;
+    Memo2: TMemo;
+    Memo3: TMemo;
+    Memo4: TMemo;
+    Button3: TButton;
+    ProgressBar1: TProgressBar;
+    Button4: TButton;
+    PopupMenu2: TPopupMenu;
+    PopupMenu_DXF: TMenuItem;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ComboBox2Change(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure ComboBox6Change(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure PopupMenu_DXFClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  fmTendonProfile: TfmTendonProfile;
+  Myinifile: TIniFile; //定义全局变量,ini配置文件
+
+implementation
+
+uses
+  uMain, uoptions, uLogin;
+
+{$R *.dfm}
+
+procedure TfmTendonProfile.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+
+Self.Free;//Hide this Form
+fmMain.Show;
+
+end;
+
+procedure TfmTendonProfile.ComboBox2Change(Sender: TObject);
+Var
+  R,L,Y1,Y2,dis,Y_dis,Y_dis2,a1,b1,c1,a2,b2,c2 : Double;
+begin
+  dis := 0;
+  Y_dis := 0;
+  Y_dis2 :=0;
+  a1 := 0;
+  b1 := 0;
+  c1 := 0;
+  a2 := 0;
+  b2 := 0;
+  c2 := 0;
+
+  try//检测开始第一段profile长度
+    if (StrToInt(Edit_Y1.Text) > StrToInt(Edit_Y2.Text)) then
+    begin
+      if (Edit_X.Text = '') or ((StrToInt(Edit_X.Text) mod 1000) = 0) then
+        Edit5.Text := '0'
+      else if (StrToInt(Edit_X.Text) mod 1000) > 350 then
+        Edit5.Text := IntToStr(StrToInt(Edit_X.Text) mod 1000)
+      else
+        Edit5.Text := IntToStr(StrToInt(Edit_X.Text) mod 1000 + 1000);
+    end
+    else
+      Edit5.Text := '0';
+  except on e:Exception do
+    //Memo1.Lines.Add('Notice:' + #13 + #10 + #10 + e.Message);
+  end;
+
+  try
+    R := StrToFloat(dlgOptions.Edit_R.Text);
+    L := StrToFloat(Edit_X.Text);
+    Y1 := StrToFloat(Edit_Y1.Text);
+    Y2 := StrToFloat(Edit_Y2.Text);
+
+    case ComboBox2.ItemIndex of
+      0://double para done!
+      begin
+        ComboBox2.Hint := '* Normally this option is for Single Span/Continuous Endspan';
+        fmMain.StatusBar1.Panels[9].Text := '* Normally this option is for Single Span/Continuous Endspan';
+
+        dis := (2 * R / L * Abs(Y1 - Y2));
+        Y_dis := (SQRT(Sqr(R)-Sqr(dis))-(R-Max(Y1,Y2)));
+
+        if Y1 > Y2 then
+        begin
+          a1 := -(dis*(Y1-Y_dis)+dis*(Y1-Y_dis))/(2* Power(dis,3));
+          b1 := 0;
+          c1 := Y1;
+          a2 := -(dis*(Y2-Y_dis)-(2*L-dis)*(Y2-Y_dis))/(Power((dis-L),3)*2);
+          b2 := ((Power(dis,2)-Power((2*L-dis),2))*(Y2-Y_dis))/(2*Power((dis-L),3));
+          c2 := (Power(dis,2)*L*Y_dis+Power(dis,2)*(dis-2*L)*Y2-dis*Power(L,2)*Y_dis+dis*sqr(2*L-dis)*Y2+sqr(L)*(2*L-dis)*Y_dis-L*sqr(2*L-dis)*Y_dis)/(2*Power((dis-L),3));
+        end
+        else
+        begin
+          a1 := -((dis-L)*(Y1-Y_dis)-0*(Y_dis-Y_dis)-(L-dis)*(Y1-Y_dis))/(((dis-L)-0)*((dis-L)-(L-dis))*(0-(L-dis)));
+          b1 := 0;
+          c1 := Y1;
+          a2 := -((L-dis)*(Y2-Y_dis)-L*(Y_dis-Y_dis)-(L+dis)*(Y2-Y_dis))/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+          b2 := (Sqr(L-dis)*Y2-Sqr(L-dis)*Y_dis-Sqr(L)*Y_dis+Sqr(L)*Y_dis+Sqr(L+dis)*Y_dis-Sqr(L+dis)*Y2)/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+          c2 := (sqr(L-dis)*L*Y_dis+Sqr(L-dis)*(-(L+dis))*Y2-(L-dis)*Sqr(L)*Y_dis+(L-dis)*Sqr(L+dis)*Y2+Sqr(L)*(L+dis)*Y_dis-L*Sqr(L+dis)*Y_dis)/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+        end
+      end;
+      1://para-straight-para done! //Y_dis is the higher turning point, Y_dis2 is the lower one.
+      begin
+        ComboBox2.Hint := '* Normally this option is for Continuous Midspan';
+        fmMain.StatusBar1.Panels[9].Text := '* Normally this option is for Continuous Midspan';
+
+        dis := (0.5 * (L - Sqrt(Sqr(L) - 4 * R * Abs(Y1 - Y2))));
+        Y_dis := Max(Y1,Y2) - R + Sqrt(Sqr(R)-Sqr(dis));
+        Y_dis2 := R - Sqrt(Sqr(R)-Sqr(dis)) + Min(Y1,Y2);
+
+        if Y1 > Y2 then
+        begin
+          a1 := -(dis*(Y1-Y_dis)+dis*(Y1-Y_dis))/(2* Power(dis,3));
+          b1 := 0;
+          c1 := Y1;
+          a2 := -((L-dis)*(Y2-Y_dis)-L*(Y_dis2-Y_dis)-(L+dis)*(Y2-Y_dis2))/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+          b2 := (Sqr(L-dis)*Y2-Sqr(L-dis)*Y_dis-Sqr(L)*Y_dis2+Sqr(L)*Y_dis+Sqr(L+dis)*Y_dis2-Sqr(L+dis)*Y2)/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+          c2 := (Sqr(L-dis)*L*Y_dis+Sqr(L-dis)*(-(L+dis))*Y2-(L-dis)*Sqr(L)*Y_dis+(L-dis)*Sqr(L+dis)*Y2+Sqr(L)*(L+dis)*Y_dis2-L*Sqr(L+dis)*Y_dis2)/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+        end
+        else
+        begin
+          a1 := -((-dis)*(Y1-Y_dis2)-0*(Y_dis2-Y_dis2)-dis*(Y1-Y_dis2))/(((-dis)-0)*((-dis)-dis)*(0-dis));
+          b1 := (Sqr(-dis)*Y1-Sqr(-dis)*Y_dis2+Sqr(dis)*Y_dis2-Sqr(dis)*Y1)/(((-dis))*((-dis)-dis)*(-dis));
+          c1 := (Sqr(-dis)*(-dis)*Y1+(-dis)*Sqr(dis)*Y1)/(((-dis))*((-dis)-dis)*(-dis));
+          a2 := -((L-dis)*(Y2-Y_dis)-L*(Y_dis-Y_dis)-(L+dis)*(Y2-Y_dis))/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+          b2 := (Sqr(L-dis)*Y2-Sqr(L-dis)*Y_dis-Sqr(L)*Y_dis+Sqr(L)*Y_dis+Sqr(L+dis)*Y_dis-Sqr(L+dis)*Y2)/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+          c2 := (Sqr(L-dis)*L*Y_dis+Sqr(L-dis)*(-(L+dis))*Y2-(L-dis)*Sqr(L)*Y_dis+(L-dis)*Sqr(L+dis)*Y2+Sqr(L)*(L+dis)*Y_dis-L*Sqr(L+dis)*Y_dis)/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+        end
+      end;
+      2://Para-Straight done!
+      begin
+        ComboBox2.Hint := '* Normally this option is for Cantilever Span';
+        fmMain.StatusBar1.Panels[9].Text := '* Normally this option is for Cantilever Span';
+
+        dis := (L - Sqrt(Sqr(L) - 2 * R * Abs(Y1 - Y2)));
+        Y_dis := (SQRT(Sqr(R)-Sqr(dis))-(R-Max(Y1,Y2)));
+
+        if Y1 > Y2 then
+        begin
+          a1 := -(dis*(Y1-Y_dis)+dis*(Y1-Y_dis))/(2* Power(dis,3));
+          b1 := 0;
+          c1 := Y1;
+          a2 := 0;
+          b2 := 0;
+          c2 := 0;
+        end
+        else
+        begin
+          a1 := -((dis-L)*(Y1-Y_dis)-0*(Y_dis-Y_dis)-(L-dis)*(Y1-Y_dis))/(((dis-L)-0)*((dis-L)-(L-dis))*(0-(L-dis)));
+          b1 := 0;
+          c1 := Y1;
+          a2 := 0;
+          b2 := 0;
+          c2 := 0;
+        end
+      end;
+      3://straight-para
+      begin
+        ComboBox2.Hint := '* Normally this option is for Cantilever Span';
+        fmMain.StatusBar1.Panels[9].Text := '* Normally this option is for Cantilever Span';
+
+        dis := (L - Sqrt(Sqr(L) - 2 * R * Abs(Y1 - Y2)));
+        Y_dis := (SQRT(Sqr(R)-Sqr(dis))-(R-Max(Y1,Y2)));
+      end;
+      4://civil para done!
+      begin
+        ComboBox2.Hint := '* Normally this option is for Civil Project Parabolic profile';
+        fmMain.StatusBar1.Panels[9].Text := '* Normally this option is for Civil Project Parabolic profile';
+
+        dis := (0.01* L);
+        Y_dis := (Max(Y1,Y2)-(Abs(Y1-Y2)*dis)/L);
+
+        if Y1 > Y2 then
+        begin
+          a1 := -(dis*(Y1-Y_dis)+dis*(Y1-Y_dis))/(2* Power(dis,3));
+          b1 := 0;
+          c1 := Y1;
+          a2 := -(dis*(Y2-Y_dis)-(2*L-dis)*(Y2-Y_dis))/(Power((dis-L),3)*2);
+          b2 := ((Power(dis,2)-Power((2*L-dis),2))*(Y2-Y_dis))/(2*Power((dis-L),3));
+          c2 := (Power(dis,2)*L*Y_dis+Power(dis,2)*(dis-2*L)*Y2-dis*Power(L,2)*Y_dis+dis*sqr(2*L-dis)*Y2+sqr(L)*(2*L-dis)*Y_dis-L*sqr(2*L-dis)*Y_dis)/(2*Power((dis-L),3));
+        end
+        else
+        begin
+          a1 := -((dis-L)*(Y1-Y_dis)-0*(Y_dis-Y_dis)-(L-dis)*(Y1-Y_dis))/(((dis-L)-0)*((dis-L)-(L-dis))*(0-(L-dis)));
+          b1 := 0;
+          c1 := Y1;
+          a2 := -((L-dis)*(Y2-Y_dis)-L*(Y_dis-Y_dis)-(L+dis)*(Y2-Y_dis))/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+          b2 := (Sqr(L-dis)*Y2-Sqr(L-dis)*Y_dis-Sqr(L)*Y_dis+Sqr(L)*Y_dis+Sqr(L+dis)*Y_dis-Sqr(L+dis)*Y2)/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+          c2 := (sqr(L-dis)*L*Y_dis+Sqr(L-dis)*(-(L+dis))*Y2-(L-dis)*Sqr(L)*Y_dis+(L-dis)*Sqr(L+dis)*Y2+Sqr(L)*(L+dis)*Y_dis-L*Sqr(L+dis)*Y_dis)/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+        end
+      end;
+
+      5://civil cubic done!
+      begin
+        ComboBox2.Hint := '* Normally this option is for Civil Project Cubic profile';
+        fmMain.StatusBar1.Panels[9].Text := '* Normally this option is for Civil Project Cubic profile';
+
+        dis := (0.01* L);
+        Y_dis := (Max(Y1,Y2)-(Abs(Y1-Y2)*dis)/L);
+
+        if Y1 > Y2 then
+        begin
+          a1 := -(dis*(Y1-Y_dis)+dis*(Y1-Y_dis))/(2* Power(dis,4));
+          b1 := 0;
+          c1 := Y1;
+          a2 := (dis*(Y2-Y_dis)-(2*L-dis)*(Y2-Y_dis))/(Power((dis-L),4)*2);
+          b2 := ((Power(dis,2)-Power((2*L-dis),2))*(Y2-Y_dis))/(2*Power((dis-L),3));
+          c2 := Y2;
+        end
+        else
+        begin
+          a1 := ((dis-L)*(Y1-Y_dis)-0*(Y_dis-Y_dis)-(L-dis)*(Y1-Y_dis))/(2*Power((dis-L),4));
+          b1 := 0;
+          c1 := Y1;
+          a2 := -((L-dis)*(Y2-Y_dis)-L*(Y_dis-Y_dis)-(L+dis)*(Y2-Y_dis))/(-2*Power(dis,4));
+          b2 := (Sqr(L-dis)*Y2-Sqr(L-dis)*Y_dis-Sqr(L)*Y_dis+Sqr(L)*Y_dis+Sqr(L+dis)*Y_dis-Sqr(L+dis)*Y2)/(((L-dis)-L)*((L-dis)-(L+dis))*(L-(L+dis)));
+          c2 := Y2;
+        end
+      end;
+    end;
+  except on e:Exception do
+    //Memo1.Lines.Add('Notice:' + #13 + #10 + #10 + e.Message);
+  end;
+  dlgOptions.Edit_dis.Text := FloatToStr(dis);
+  dlgOptions.Edit_Y_dis.Text := FloatToStr(Y_dis);
+  dlgOptions.Edit_Y_dis2.Text := FloatToStr(Y_dis2);
+  dlgOptions.Edit_a1.Text := FloatToStr(a1);
+  dlgOptions.Edit_a2.Text := FloatToStr(a2);
+  dlgOptions.Edit_b1.Text := FloatToStr(b1);
+  dlgOptions.Edit_b2.Text := FloatToStr(b2);
+  dlgOptions.Edit_c1.Text := FloatToStr(c1);
+  dlgOptions.Edit_c2.Text := FloatToStr(c2);
+
+end;
+
+procedure TfmTendonProfile.Button3Click(Sender: TObject);
+var
+  X, Y, X_Interval, Y1, Y2, L, R, dis, Y_dis,Y_dis2,a1,b1,c1,a2,b2,c2: Double;
+  //X：从左侧开始X轴长度,X_Interval：X轴间距
+  //Y: X位置上的Profile高度，Y1，Y2：分别为最左侧和最右侧的Profile高度
+  //L：Tendon水平方向总长度，R最小曲线半径
+  //dis：折点位置，曲线转折点水平长度，抛物线、圆、直线交接位置
+  i, j, k, n: Integer;
+  LineSeries:TLineSeries;
+begin
+  Y1 := StrToFloat(Edit_Y1.Text);
+  Y2 := StrToFloat(Edit_Y2.Text);
+  L := StrToFloat(Edit_X.Text);
+  R := StrToFloat(dlgOptions.Edit_R.Text);
+  Y := 0;
+  X_Interval := 0;
+  X := 0;
+  Dis := StrToFloat(dlgOptions.Edit_dis.Text);
+  Y_dis := StrToFloat(dlgOptions.Edit_Y_dis.Text);
+  Y_dis2 := StrToFloat(dlgOptions.Edit_Y_dis2.Text);
+  a1 := StrToFloat(dlgOptions.Edit_a1.Text);
+  b1 := StrToFloat(dlgOptions.Edit_b1.Text);
+  c1 := StrToFloat(dlgOptions.Edit_c1.Text);
+  a2 := StrToFloat(dlgOptions.Edit_a2.Text);
+  b2 := StrToFloat(dlgOptions.Edit_b2.Text);
+  c2 := StrToFloat(dlgOptions.Edit_c2.Text);
+
+   chart1.BevelOuter:=BvNone;
+   chart1.RightAxis.Automatic:=true;
+   LineSeries:=TLineSeries.Create(chart1);
+   Chart1.FreeAllSeries;
+   Chart1.AddSeries(LineSeries);
+   chart1.Series[0].Title:='Tendon Profile';
+   chart1.Series[0].ShowInLegend:=true;
+   chart1.Series[0].Marks.Style:=Smsvalue;
+
+  Memo1.Clear;//清理临时Memo1
+  Memo2.Clear;//清理临时Memo2
+  Memo4.Clear;//清理主文件Memo4
+  Memo4.Lines := Memo3.Lines;//Dxf头文件赋值给Memo4，Memo4为主文件存储位置
+
+  if StrToFloat(Edit_X.Text) > 2000000 then
+    case MessageBox(Handle, 'Component length more than 2000 m.' + #13 + #13 + 'Please check your input.', 'Are you kidding me?', MB_OKCANCEL + MB_ICONQUESTION) of
+      IDOK:
+        Abort;
+      IDCANCEL:
+        Abort;
+    end;
+
+  i := Trunc((L - StrToFloat(Edit5.Text)) / StrToInt(ComboBox4.Text));//Trunc取得X的整数部分
+  j := StrToInt(Edit_X.Text) - StrToInt(Edit5.Text) - i * StrToInt(ComboBox4.Text);
+
+  ProgressBar1.Visible := True;
+  ProgressBar1.Max := 2 * i;
+
+  Memo1.Lines.Add('Tot. Hor.' + #9 + '|' + 'Support' + #9 + '|' + 'Tendon');
+  Memo1.Lines.Add('Distance' + #9 + '|' + 'Interval' + #9 + '|' + 'Profile');
+  Memo1.Lines.Add('====================');
+
+  if StrToFloat(Edit5.Text) <> 0 then
+  begin
+    Memo1.Lines.Add('0' + #9 + '|' + '0' + #9 + '|' + FloatToStr(Y1));//FloatToStr(Y1)
+    Memo2.Lines.Add('0' + #13#10 + FloatToStr(Y1));
+  end;
+
+  for k := 0 to i do
+  begin
+    X := StrToFloat(Edit5.Text) + StrToFloat(ComboBox4.Text) * k;
+
+    case ComboBox2.ItemIndex of
+      0://double para done!
+        if Y1 > Y2 then
+        begin
+          if X < dis then
+          begin
+            Y := a1*Sqr(X)+b1*X+c1;
+          end
+          else
+          begin
+            Y := a2*Sqr(X)+b2*X+c2;
+          end;
+        end
+        else
+        begin
+          if X < (L - dis) then
+          begin
+            Y := a1*Sqr(X)+b1*X+c1;
+          end
+          else
+          begin
+            Y := a2*Sqr(X)+b2*X+c2;
+          end;
+        end;
+      1://para-staright-para
+        if Y1 > Y2 then
+        begin
+          if X < dis then
+          begin
+            Y := a1*Sqr(X)+b1*X+c1;
+          end
+          else if X > (L - dis) then
+          begin
+            Y := a2*Sqr(X)+b2*X+c2;
+          end
+          else
+          begin
+            Y := (L-dis-X)*(Y_dis-Y_dis2)/(L-2*dis)+Y_dis2;
+            //Y := ((SQRT(Sqr(R) - Sqr(dis)) - (R - Y1)) - (R + Y2 - SQRT(Sqr(R) - Sqr(dis)))) * (L - dis - X) / (L - dis * 2) + (R + Y2 - SQRT(Sqr(R) - Sqr(dis)));
+          end;
+        end
+        else
+        begin
+          if X < dis then
+          begin
+            Y := a1*Sqr(X)+b1*X+c1;
+          end
+          else if X > (L - dis) then
+          begin
+            Y := a2*Sqr(X)+b2*X+c2;
+          end
+          else
+          begin
+            Y := (X-dis)*(Y_dis-Y_dis2)/(L-2*dis)+Y_dis2;
+          end;
+        end;
+      2://Para-Straight Done!
+        if Y1 > Y2 then
+        begin
+          if X < dis then
+          begin
+            Y := a1*Sqr(X)+b1*X+c1;
+            //Y := SQRT(Sqr(R) - Sqr(X)) - (R - Y1);
+          end
+          else
+          begin
+            Y := (((SQRT(Sqr(R) - Sqr(dis)) - (R - Y1)) - Y2) * (L - X) / (L - dis) + Y2);
+          end;
+        end
+        else
+        begin
+          if X > (L - dis) then
+          begin
+            Y := a1*Sqr(X)+b1*X+c1;
+            //Y := (SQRT(Sqr(R)-Sqr(L-X))-R+Y2);
+          end
+          else
+          begin
+            Y := ((((SQRT(Sqr(R)-Sqr(dis))-R+Y2)-Y1)*X/(L-dis)+Y1));
+          end;
+        end;
+      3:
+        if Y1 > Y2 then
+        begin
+          if X > (L - dis) then
+          begin
+            Y := (R + Y2 - SQRT(Sqr(R) - Sqr(L - X)));
+          end
+          else
+          begin
+            Y := ((L - dis - X) / (L - dis) * (Y1 - (R + Y2 - SQRT(Sqr(R) - Sqr(dis)))) + (R + Y2 - SQRT(Sqr(R) - Sqr(dis))));
+          end;
+        end
+        else
+        begin
+          if X < dis then
+          begin
+            Y := (R + Y1 - SQRT(Sqr(R) - Sqr(X)));
+          end
+          else
+          begin
+            Y := ((X - dis) / (L - dis) * (Y2 - (R + Y1 - SQRT(Sqr(R) - Sqr(dis)))) + (R + Y1 - SQRT(Sqr(R) - Sqr(dis))));
+          end;
+        end;
+        4://Civil para
+        if Y1 > Y2 then
+        begin
+          if X < dis then
+          begin
+            Y := a1*Sqr(X)+b1*X+c1;
+          end
+          else
+          begin
+            Y := a2*Sqr(X)+b2*X+c2;
+          end;
+        end
+        else
+        begin
+          if X < (L - dis) then
+          begin
+            Y := a1*Sqr(X)+b1*X+c1;
+          end
+          else
+          begin
+            Y := a2*Sqr(X)+b2*X+c2;
+          end;
+        end;
+        5://Civil cubic
+        if Y1 > Y2 then
+        begin
+          if X < dis then
+          begin
+            Y := a1*Power(X,3)+c1;
+          end
+          else
+          begin
+            Y := a2*Power((L-X),3)+c2;
+          end;
+        end
+        else
+        begin
+          if X < (L - dis) then
+          begin
+            Y := a1*Power(X,3)+c1;
+          end
+          else
+          begin
+            Y := a2*Power((L-X),3)+c2;
+          end;
+        end;
+
+    end;
+
+    Memo1.Lines.Add(FloatToStr(X) + #9 + '|' + FloatToStr(X - X_Interval) + #9 + '|' + FloatToStr(SimpleRoundTo(Y / StrToFloat(ComboBox5.Text), 0) * StrToFloat(ComboBox5.Text))); //SimpleRoundTo:数学四舍五入，取5或者10的倍数
+    Memo2.Lines.Add(FloatToStr(X) + #13#10 + FloatToStr(SimpleRoundTo(Y / StrToFloat(ComboBox5.Text), 0) * StrToFloat(ComboBox5.Text)));
+    X_Interval := X;
+
+    ProgressBar1.StepBy(1);
+  end;
+
+  if j <> 0 then
+  begin
+    Memo1.Lines.Add(FloatToStr(X + j) + #9 + '|' + IntToStr(j) + #9 + '|' + FloatToStr(Y2));
+    Memo2.Lines.Add(FloatToStr(X + j) + #13#10 + FloatToStr(Y2));
+
+    ProgressBar1.StepBy(1);
+  end;
+
+  with Memo4.Lines do
+  begin
+    if dlgOptions.CheckBox8.Checked = True then
+    begin
+    //Beam Frame
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'Beam-Line' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' ' + '0'); //X1
+    Add(' 20');
+    Add(' ' + '0'); //Y1
+    Add(' 11');
+    Add(' ' + Memo2.Lines[Memo2.Lines.Count - 2]); //X2
+    Add(' 21');
+    Add(' ' + '0'); //Y2
+
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'Beam-Line' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' ' + '0'); //X1
+    Add(' 20');
+    Add(' ' + FloatToStr(StrToFloat(Memo2.Lines.Strings[1])*1.25 + StrToFloat(Memo2.Lines[Memo2.Lines.Count - 1])*1.25)); //Y1
+    Add(' 11');
+    Add(' ' + Memo2.Lines[Memo2.Lines.Count - 2]); //X2
+    Add(' 21');
+    Add(' ' + FloatToStr(StrToFloat(Memo2.Lines.Strings[1])*1.25 + StrToFloat(Memo2.Lines[Memo2.Lines.Count - 1])*1.25)); //Y2
+
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'Beam-Line' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' ' + '0'); //X1
+    Add(' 20');
+    Add(' ' + '0'); //Y1
+    Add(' 11');
+    Add(' ' + '0'); //X2
+    Add(' 21');
+    Add(' ' + FloatToStr(StrToFloat(Memo2.Lines.Strings[1])*1.25 + StrToFloat(Memo2.Lines[Memo2.Lines.Count - 1])*1.25)); //Y2
+
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'Beam-Line' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' ' + Memo2.Lines[Memo2.Lines.Count - 2]); //X1
+    Add(' 20');
+    Add(' ' + '0'); //Y1
+    Add(' 11');
+    Add(' ' + Memo2.Lines[Memo2.Lines.Count - 2]); //X2
+    Add(' 21');
+    Add(' ' + FloatToStr(StrToFloat(Memo2.Lines.Strings[1])*1.25 + StrToFloat(Memo2.Lines[Memo2.Lines.Count - 1])*1.25)); //Y2
+
+    //Column frame
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' 1000'); //X1
+    Add(' 20');
+    Add(' 0'); //Y1
+    Add(' 11');
+    Add(' 1000'); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+    
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' 0'); //X1
+    Add(' 20');
+    Add(' 0'); //Y1
+    Add(' 11');
+    Add(' 0'); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+ 
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' -100'); //X1
+    Add(' 20');
+    Add(' -300'); //Y1
+    Add(' 11');
+    Add(' 420'); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+    
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' 420'); //X1
+    Add(' 20');
+    Add(' -300'); //Y1
+    Add(' 11');
+    Add(' 420'); //X2
+    Add(' 21');
+    Add(' -240'); //Y2
+    
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' 420'); //X1
+    Add(' 20');
+    Add(' -240'); //Y1
+    Add(' 11');
+    Add(' 580'); //X2
+    Add(' 21');
+    Add(' -360'); //Y2
+
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' 580'); //X1
+    Add(' 20');
+    Add(' -360'); //Y1
+    Add(' 11');
+    Add(' 580'); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+    
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' 580'); //X1
+    Add(' 20');
+    Add(' -300'); //Y1
+    Add(' 11');
+    Add(' 1100'); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+
+    //Column 2 frame
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+1000)); //X1
+    Add(' 20');
+    Add(' 0'); //Y1
+    Add(' 11');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+1000)); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+    
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000)); //X1
+    Add(' 20');
+    Add(' 0'); //Y1
+    Add(' 11');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000)); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+ 
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000-100)); //X1
+    Add(' 20');
+    Add(' -300'); //Y1
+    Add(' 11');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+420)); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+    
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+420)); //X1
+    Add(' 20');
+    Add(' -300'); //Y1
+    Add(' 11');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+420)); //X2
+    Add(' 21');
+    Add(' -240'); //Y2
+    
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+420)); //X1
+    Add(' 20');
+    Add(' -240'); //Y1
+    Add(' 11');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+580)); //X2
+    Add(' 21');
+    Add(' -360'); //Y2
+    
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+580)); //X1
+    Add(' 20');
+    Add(' -360'); //Y1
+    Add(' 11');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+580)); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+    
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'COLUMN' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+580)); //X1
+    Add(' 20');
+    Add(' -300'); //Y1
+    Add(' 11');
+    Add(' '+InttoStr(StrtoInt(Memo2.Lines[Memo2.Lines.Count - 2])-1000+1100)); //X2
+    Add(' 21');
+    Add(' -300'); //Y2
+
+    //Beam Marking
+    Add('0' + #13#10 + 'TEXT' + #13#10 + ' 8' + #13#10 + 'BEAM-TXT' + #13#10 + ' 7' + #13#10 + 'TextStyle' + #13#10 + ' 10');
+    Add(' ' + FloattoStr(StrToFloat(Memo2.Lines[Memo2.Lines.Count - 2])/2-1000)); //X position
+    Add(' 20');
+    Add(' -350'); //Y1
+    Add(' 72' + #13#10 + ' 0' + #13#10 + ' 73' + #13#10 + ' 2' + #13#10 + ' 11');
+    Add(' ' + FloattoStr(StrToFloat(Memo2.Lines[Memo2.Lines.Count - 2])/2-1000)); //X position
+    Add(' 21');
+    Add(' -350'); //Y1
+    Add(' 40' + #13#10 + ' 275' + #13#10 + ' 41' + #13#10 + ' 0.5' + #13#10 + ' 50' + #13#10 + ' 0' + #13#10 + ' 1' + #13#10 + '%%U3PTB1 - 2000x'+FloatToStr(StrToFloat(Memo2.Lines.Strings[1])*1.25 + StrToFloat(Memo2.Lines[Memo2.Lines.Count - 1])*1.25)+'(D)');
+
+    //Scale Marking
+    Add('0' + #13#10 + 'TEXT' + #13#10 + ' 8' + #13#10 + 'SCALE-TXT' + #13#10 + ' 7' + #13#10 + 'TextStyle' + #13#10 + ' 10');
+    Add(' ' + FloattoStr(StrToFloat(Memo2.Lines[Memo2.Lines.Count - 2])/2-1000)); //X position
+    Add(' 20');
+    Add(' -645'); //Y1
+    Add(' 72' + #13#10 + ' 0' + #13#10 + ' 73' + #13#10 + ' 2' + #13#10 + ' 11');
+    Add(' ' + FloattoStr(StrToFloat(Memo2.Lines[Memo2.Lines.Count - 2])/2-1000)); //X position
+    Add(' 21');
+    Add(' -645'); //Y1
+    Add(' 40' + #13#10 + ' 100' + #13#10 + ' 41' + #13#10 + ' 0.5' + #13#10 + ' 50' + #13#10 + ' 0' + #13#10 + ' 1' + #13#10 + 'Scale= 1:50');
+    end;
+  end;
+  
+  //Table header
+  with Memo4.Lines do
+  begin
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'TABLE' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' -2000'); //X1
+    Add(' 20');
+    Add(' ' + '-900'); //Y1
+    Add(' 11');
+    Add(' ' + Memo2.Lines[Memo2.Lines.Count - 2]); //X2
+    Add(' 21');
+    Add(' ' + '-900'); //Y2
+
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'TABLE' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' -2000'); //X1
+    Add(' 20');
+    Add(' ' + '-1350'); //Y1
+    Add(' 11');
+    Add(' ' + Memo2.Lines[Memo2.Lines.Count - 2]); //X2
+    Add(' 21');
+    Add(' ' + '-1350'); //Y2
+
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'TABLE' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' -2000'); //X1
+    Add(' 20');
+    Add(' ' + '-1800'); //Y1
+    Add(' 11');
+    Add(' ' + Memo2.Lines[Memo2.Lines.Count - 2]); //X2
+    Add(' 21');
+    Add(' ' + '-1800'); //Y2
+
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'TABLE' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' -2000'); //X1
+    Add(' 20');
+    Add(' ' + '-900'); //Y1
+    Add(' 11');
+    Add(' -2000'); //X2
+    Add(' 21');
+    Add(' ' + '-1800'); //Y2
+
+    Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'TABLE' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+    Add(' 0'); //X1
+    Add(' 20');
+    Add(' ' + '-900'); //Y1
+    Add(' 11');
+    Add(' 0'); //X2
+    Add(' 21');
+    Add(' ' + '-1800'); //Y2
+
+    Add('0' + #13#10 + 'TEXT' + #13#10 + ' 8' + #13#10 + 'PROFILE-HEADER' + #13#10 + ' 7' + #13#10 + 'TextStyle' + #13#10 + ' 10');
+    Add(' -1900'); //X position
+    Add(' 20');
+    Add(' -1125'); //Y1
+    Add(' 72' + #13#10 + ' 0' + #13#10 + ' 73' + #13#10 + ' 2' + #13#10 + ' 11');
+    Add(' -1900'); //X position
+    Add(' 21');
+    Add(' -1125'); //Y1
+    Add(' 40' + #13#10 + ' 150' + #13#10 + ' 41' + #13#10 + ' 0.6' + #13#10 + ' 50' + #13#10 + ' 0' + #13#10 + ' 1' + #13#10 + 'DISTANCE');
+
+    Add('0' + #13#10 + 'TEXT' + #13#10 + ' 8' + #13#10 + 'PROFILE-HEADER' + #13#10 + ' 7' + #13#10 + 'TextStyle' + #13#10 + ' 10');
+    Add(' -1900'); //X position
+    Add(' 20');
+    Add(' -1575'); //Y1
+    Add(' 72' + #13#10 + ' 0' + #13#10 + ' 73' + #13#10 + ' 2' + #13#10 + ' 11');
+    Add(' -1900'); //X position
+    Add(' 21');
+    Add(' -1575'); //Y1
+    Add(' 40' + #13#10 + ' 150' + #13#10 + ' 41' + #13#10 + ' 0.6' + #13#10 + ' 50' + #13#10 + ' 0' + #13#10 + ' 1' + #13#10 + 'TENDON HEIGHT ');
+
+    Add('0' + #13#10 + 'TEXT' + #13#10 + ' 8' + #13#10 + 'PROFILE-TXT-HEIGHT' + #13#10 + ' 7' + #13#10 + 'TextStyle' + #13#10 + ' 10');
+    Add(' -120'); //X position
+    Add(' 20');
+    Add(' -1710'); //Y
+    Add(' 72' + #13#10 + ' 0' + #13#10 + ' 73' + #13#10 + ' 2' + #13#10 + ' 11');
+    Add(' -120'); //X position
+    Add(' 21');
+    Add(' -1710'); //Y
+    Add(' 40' + #13#10 + ' 150' + #13#10 + ' 41' + #13#10 + ' 0.6' + #13#10 + ' 50' + #13#10 + ' 90.0' + #13#10 + ' 1' + #13#10 + Memo2.Lines.Strings[1]); //Text
+
+    for n := 1 to (Memo2.Lines.Count div 2) - 1 do
+    begin
+      //Profile line start//////////////////////////////////////////////////////
+      Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'TENDON' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+      Add(' ' + Memo2.Lines.Strings[2 * n - 2]); //X1
+      Add(' 20');
+      Add(' ' + Memo2.Lines.Strings[2 * n - 1]); //Y1
+      Add(' 11');
+      Add(' ' + Memo2.Lines.Strings[2 * n + 0]); //X2
+      Add(' 21');
+      Add(' ' + Memo2.Lines.Strings[2 * n + 1]); //Y2
+
+      chart1.Series[0].Addxy( StrToFloat(Memo2.Lines.Strings[2 * n - 2]),StrToFloat(Memo2.Lines.Strings[2 * n - 1]));
+
+      //Table line start
+      Add('0' + #13#10 + 'LINE' + #13#10 + ' 8' + #13#10 + 'TABLE' + #13#10 + ' 6' + #13#10 + 'Continuous' + #13#10 + ' 10');
+      Add(' ' + Memo2.Lines.Strings[2 * n + 0]); //X2
+      Add(' 20');
+      Add(' ' + '-900'); //Y1
+      Add(' 11');
+      Add(' ' + Memo2.Lines.Strings[2 * n + 0]); //X2
+      Add(' 21');
+      Add(' ' + '-1800'); //Y2
+
+      //Profile interval text start
+      Add('0' + #13#10 + 'TEXT' + #13#10 + ' 8' + #13#10 + 'PROFILE-TXT-DIST' + #13#10 + ' 7' + #13#10 + 'TextStyle' + #13#10 + ' 10');
+      Add(' ' + FloatToStr(StrToFloat(Memo2.Lines.Strings[2 * n + 0]) - 0.5 * (StrToFloat(Memo2.Lines.Strings[2 * n + 0]) - StrToFloat(Memo2.Lines.Strings[2 * n - 2])) - 100)); //X position
+      Add(' 20');
+      Add(' -1125'); //Y1
+      Add(' 72' + #13#10 + ' 0' + #13#10 + ' 73' + #13#10 + ' 2' + #13#10 + ' 11');
+      Add(' ' + FloatToStr(StrToFloat(Memo2.Lines.Strings[2 * n + 0]) - 0.5 * (StrToFloat(Memo2.Lines.Strings[2 * n + 0]) - StrToFloat(Memo2.Lines.Strings[2 * n - 2])) - 100)); //X position
+      Add(' 21');
+      Add(' -1125'); //Y1
+      Add(' 40' + #13#10 + ' 150' + #13#10 + ' 41' + #13#10 + ' 0.6' + #13#10 + ' 50' + #13#10 + ' 0' + #13#10 + ' 1' + #13#10 + IntToStr(StrToInt(Memo2.Lines.Strings[2 * n + 0]) - StrToInt(Memo2.Lines.Strings[2 * n - 2])));
+
+      //Profile Height text start
+      Add('0' + #13#10 + 'TEXT' + #13#10 + ' 8' + #13#10 + 'PROFILE-TXT-HEIGHT' + #13#10 + ' 7' + #13#10 + 'TextStyle' + #13#10 + ' 10');
+      Add(' ' + IntToStr(StrToInt(Memo2.Lines.Strings[2 * n + 0]) - 120)); //X2 position
+      Add(' 20');
+      Add(' -1710'); //Y
+      Add(' 72' + #13#10 + ' 0' + #13#10 + ' 73' + #13#10 + ' 2' + #13#10 + ' 11');
+      Add(' ' + IntToStr(StrToInt(Memo2.Lines.Strings[2 * n + 0]) - 120)); //X2 position
+      Add(' 21');
+      Add(' -1710'); //Y
+      Add(' 40' + #13#10 + ' 150' + #13#10 + ' 41' + #13#10 + ' 0.6' + #13#10 + ' 50' + #13#10 + ' 90.0' + #13#10 + ' 1' + #13#10 + Memo2.Lines.Strings[2 * n + 1]); //Text
+
+      ProgressBar1.StepBy(1);
+
+    end;
+    ProgressBar1.Position := 0;
+    ProgressBar1.Hide;
+  end;
+end;
+
+procedure TfmTendonProfile.Button4Click(Sender: TObject);
+var
+  F: TextFile; //TextFile 和 Text 是一样的
+  FileName: string;
+begin
+  if Memo1.Lines.Count < 3 then
+  begin
+  MessageBox(Handle, 'No tendon profile generated.' + #13 + #13 + 'Please check your input.', 'Notice:', MB_OK + MB_ICONASTERISK );
+  Abort;
+  end
+  else;
+
+  fmMain.SaveDialog1.Filter := 'Tendon Profile Drawing (.dxf)|*.dxf';
+  fmMain.SaveDialog1.Title := 'Save';
+  fmMain.SaveDialog1.DefaultExt := '.dxf';
+  if fmMain.SaveDialog1.Execute then
+  begin
+    FileName := fmMain.SaveDialog1.FileName; //create data file
+    AssignFile(F, FileName);
+    Rewrite(F); //覆盖已存在的文件
+
+    Writeln(F, Memo4.Text + ' 0'); //写入图纸主要数据
+    Writeln(F, 'ENDSEC' + #13#10 + ' 0' + #13#10 + 'EOF'); //写入图纸结尾数据
+    CloseFile(F);
+  end
+  else
+    Abort;
+
+end;
+
+procedure TfmTendonProfile.ComboBox6Change(Sender: TObject);
+var
+  temp : string;
+begin
+  case ComboBox6.ItemIndex of
+    0:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit13.Text;
+      end;
+    1:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit1.Text;
+      end;
+    2:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit2.Text;
+      end;
+    3:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit3.Text;
+      end;
+    4:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit4.Text;
+      end;
+    5:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit5.Text;
+      end;
+    6:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit6.Text;
+      end;
+    7:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit7.Text;
+      end;
+    8:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit8.Text;
+      end;
+    9:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit9.Text;
+      end;
+    10:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit10.Text;
+      end;
+    11:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit11.Text;
+      end;
+    12:
+      begin
+        dlgOptions.Edit_R.Text := dlgOptions.Edit12.Text;
+      end;
+  end;
+  temp := Edit_X.Text;
+  Edit_X.Text := '1000';
+  Edit_X.Text := temp;
+end;
+
+procedure TfmTendonProfile.Button2Click(Sender: TObject);
+var
+  temp: string;
+begin
+  temp := Edit_Y1.Text;
+  Edit_Y1.Text := Edit_Y2.Text;
+  Edit_Y2.Text := temp;
+end;
+
+procedure TfmTendonProfile.PopupMenu_DXFClick(Sender: TObject);
+begin
+  Self.Button4.Click;
+end;
+
+procedure TfmTendonProfile.FormActivate(Sender: TObject);
+var
+  ConfigFile: string;
+begin
+
+  if FileExists('Setting.ini') then
+    begin
+      ConfigFile := ExtractFilePath(ParamStr(0))+ 'Setting.ini';
+      Myinifile := TIniFile.Create(ConfigFile);
+      with Myinifile do
+      begin
+      {dlgOptions.CheckBox8.Checked := Myinifile.ReadBool('Tendon Profile', 'Enable Beam/Column Graph', True);
+      dlgOptions.Edit1.Text := Myinifile.ReadString('Tendon Profile', '1s-3s', '2730');
+      dlgOptions.Edit2.Text := Myinifile.ReadString('Tendon Profile', '4s', '3080');
+      dlgOptions.Edit3.Text := Myinifile.ReadString('Tendon Profile', '5s-7s', '4130');
+      dlgOptions.Edit4.Text := Myinifile.ReadString('Tendon Profile', '8s-9s', '4480');
+      dlgOptions.Edit5.Text := Myinifile.ReadString('Tendon Profile', '10s-13s', '5530');
+      dlgOptions.Edit6.Text := Myinifile.ReadString('Tendon Profile', '14s-19s', '6580');
+      dlgOptions.Edit7.Text := Myinifile.ReadString('Tendon Profile', '20s-22s', '7280');
+      dlgOptions.Edit8.Text := Myinifile.ReadString('Tendon Profile', '23s-25s', '7630');
+      dlgOptions.Edit9.Text := Myinifile.ReadString('Tendon Profile', '26s-27s', '7980');
+      dlgOptions.Edit10.Text := Myinifile.ReadString('Tendon Profile', '28s-31s', '8330');
+      dlgOptions.Edit11.Text := Myinifile.ReadString('Tendon Profile', '32s-37s', '9030');
+      dlgOptions.Edit12.Text := Myinifile.ReadString('Tendon Profile', '38s-55s', '11130');
+      dlgOptions.Edit13.Text := Myinifile.ReadString('Tendon Profile', 'slab', '2500');}
+      end;
+      Myinifile.Free;
+    end
+  else;
+
+  with ProgressBar1 do
+  begin
+  ProgressBar1.Parent:= fmMain.StatusBar1;
+  ProgressBar1.Left:= 400;
+  ProgressBar1.Top:= fmMain.StatusBar1.BorderWidth + 2;
+  ProgressBar1.Height:= fmMain.StatusBar1.Height - (fmMain.StatusBar1.BorderWidth + 2);
+  ProgressBar1.Width:= fmMain.StatusBar1.Panels[7].Width + fmMain.StatusBar1.BorderWidth - 2;
+  ProgressBar1.Position:= 0;
+  end;
+  
+end;
+end.

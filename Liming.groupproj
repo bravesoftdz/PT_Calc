@@ -1,0 +1,40 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{9b153493-9f02-40cc-aff8-c11d24eeabbf}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup />
+  <ProjectExtensions>
+    <Borland.Personality>Default.Personality</Borland.Personality>
+    <Borland.ProjectType />
+    <BorlandProject>
+<BorlandProject xmlns=""><Default.Personality></Default.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Target Name="Liming">
+    <MSBuild Projects="Liming.dproj" Targets="" />
+  </Target>
+  <Target Name="Liming:Clean">
+    <MSBuild Projects="Liming.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="Liming:Make">
+    <MSBuild Projects="Liming.dproj" Targets="Make" />
+  </Target>
+  <Target Name="EMU">
+    <MSBuild Projects="..\EMU\EMU.dproj" Targets="" />
+  </Target>
+  <Target Name="EMU:Clean">
+    <MSBuild Projects="..\EMU\EMU.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EMU:Make">
+    <MSBuild Projects="..\EMU\EMU.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Build">
+    <CallTarget Targets="Liming;EMU" />
+  </Target>
+  <Target Name="Clean">
+    <CallTarget Targets="Liming:Clean;EMU:Clean" />
+  </Target>
+  <Target Name="Make">
+    <CallTarget Targets="Liming:Make;EMU:Make" />
+  </Target>
+</Project>

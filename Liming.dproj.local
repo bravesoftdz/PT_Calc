@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2017/08/08 11:34:20.476.pas,E:\PPI\PPIE\PT Calc\Form\Calcular.pas=E:\PPI\PPIE\PT Calc\Unit\Calcular.pas</Transaction>
+    <Transaction>2017/08/10 13:45:55.114.pas,E:\PPI\PPIE\PT Calc\Unit1.pas=E:\PPI\PPIE\PT Calc\Unit\ExtractFile.pas</Transaction>
+    <Transaction>2017/08/10 13:58:16.151.pas,E:\PPI\PPIE\PT Calc\Unit\ExtractFile.pas=E:\PPI\PPIE\PT Calc\Unit\Tools.pas</Transaction>
+    <Transaction>2017/08/10 14:05:40.448.pas,E:\PPI\PPIE\PT Calc\Unit\Tools.pas=E:\PPI\PPIE\PT Calc\Unit\PublicUnit.pas</Transaction>
+    <Transaction>2017/08/21 14:39:01.153.pas,E:\PPI\PPIE\PT Calc\Form\uHexEditer.pas=</Transaction>
+    <Transaction>2017/08/21 14:39:01.153.dfm,E:\PPI\PPIE\PT Calc\Form\uHexEditer.dfm=</Transaction>
+    <Transaction>2017/08/21 16:10:16.786.pas,E:\PPI\PPIE\PT Calc\Unit1.pas=E:\PPI\PPIE\PT Calc\Unit\HexEditor.pas</Transaction>
+    <Transaction>2017/08/21 16:12:16.702.pas,E:\PPI\PPIE\PT Calc\Unit\HexEditor.pas=E:\PPI\PPIE\PT Calc\Unit\uHexEditor.pas</Transaction>
+    <Transaction>2017/08/24 16:38:46.871.pas,E:\PPI\PPIE\PT Calc\Unit1.pas=E:\PPI\PPIE\PT Calc\Form\RAPT_Crack.pas</Transaction>
+    <Transaction>2017/08/24 16:38:46.871.dfm,E:\PPI\PPIE\PT Calc\Unit1.dfm=E:\PPI\PPIE\PT Calc\Form\RAPT_Crack.dfm</Transaction>
+  </Transactions>
+</BorlandProject>
